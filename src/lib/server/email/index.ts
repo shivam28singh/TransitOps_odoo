@@ -7,7 +7,7 @@ const resend = new Resend(RESEND_API_KEY);
 export const sendEmailVerificationEmail = async (email: string, name: string, url: string) => {
 	console.log('Sending email verification email to', email);
 	await resend.emails.send({
-		from: 'KanFlow <noreply@kanflow.pro>',
+		from: 'TransitOps <tansitops@nota.ink>',
 		to: [email],
 		subject: 'Verify your email',
 		html: confirmEmailTemplate(url, name)
@@ -17,7 +17,7 @@ export const sendEmailVerificationEmail = async (email: string, name: string, ur
 export const sendPasswordResetEmail = async (email: string, name: string, url: string) => {
 	console.log('Sending password reset email to', email);
 	await resend.emails.send({
-		from: 'KanFlow <noreply@kanflow.pro>',
+		from: 'TransitOps <tansitops@nota.ink>',
 		to: [email],
 		subject: 'Reset your password',
 		html: passwordResetTemplate(url, name)

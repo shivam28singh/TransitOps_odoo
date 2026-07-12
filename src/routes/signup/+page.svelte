@@ -217,7 +217,7 @@
 								<Select.Content>
 									<Select.Group>
 										<Select.GroupHeading>Role</Select.GroupHeading>
-										<Select.Item value="FLEET_MANAGER" label="Fleet Manager" />
+										<Select.Item value="FLEET_MANAGER" label="FLEET MANAGET" />
 										<Select.Item value="DISPATCHER" label="Dispatcher" />
 										<Select.Item value="SAFETY_OFFICER" label="Safety Officer" />
 										<Select.Item value="FINANCIAL_ANALYST" label="Financial Analyst" />

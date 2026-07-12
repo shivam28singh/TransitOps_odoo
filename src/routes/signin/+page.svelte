@@ -231,6 +231,13 @@
 				<Button class="w-full h-10" type="submit" disabled={isSubmitting}>
 					{isSubmitting ? 'Signing in...' : 'Sign In'}
 				</Button>
+				<p class="text-xs text-center text-muted-foreground pt-2">
+					Not a user?
+					<a
+						href={resolve('/signup')}
+						class="font-semibold text-primary hover:underline underline-offset-4">Sign Up</a
+					>
+				</p>
 			</form>
 
 			<div class="pt-4 border-t border-muted/50 space-y-1.5 text-xs text-muted-foreground">

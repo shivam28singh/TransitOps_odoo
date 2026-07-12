@@ -41,6 +41,7 @@ export const tripStatusEnum = pgEnum('trip_status', [
 	'COMPLETED',
 	'CANCELLED'
 ]);
+export const maintenanceStatusEnum = pgEnum('maintenance_status', ['ACTIVE', 'COMPLETED']);
 
 // ============================================================
 // TABLES
@@ -118,6 +119,22 @@ export const trip = pgTable('trip', {
 		.notNull()
 });
 
+export const maintenance = pgTable('maintenance', {
+	id: serial('id').primaryKey(),
+	vehicleId: integer('vehicle_id')
+		.notNull()
+		.references(() => vehicle.id),
+	serviceType: text('service_type').notNull(),
+	cost: numeric('cost', { precision: 10, scale: 2 }).notNull(),
+	date: timestamp('date').notNull(),
+	status: maintenanceStatusEnum('status').default('ACTIVE').notNull(),
+	createdAt: timestamp('created_at').defaultNow().notNull(),
+	updatedAt: timestamp('updated_at')
+		.defaultNow()
+		.$onUpdate(() => new Date())
+		.notNull()
+});
+
 // ============================================================
 // RELATIONS
 // ============================================================
@@ -142,7 +159,15 @@ export const driverRelations = relations(driver, ({ one, many }) => ({
 }));
 
 export const vehicleRelations = relations(vehicle, ({ many }) => ({
-	trips: many(trip)
+	trips: many(trip),
+	maintenanceLogs: many(maintenance)
+}));
+
+export const maintenanceRelations = relations(maintenance, ({ one }) => ({
+	vehicle: one(vehicle, {
+		fields: [maintenance.vehicleId],
+		references: [vehicle.id]
+	})
 }));
 
 export const tripRelations = relations(trip, ({ one }) => ({
@@ -170,5 +195,8 @@ export type NewVehicle = typeof vehicle.$inferInsert;
 
 export type Trip = typeof trip.$inferSelect;
 export type NewTrip = typeof trip.$inferInsert;
+
+export type Maintenance = typeof maintenance.$inferSelect;
+export type NewMaintenance = typeof maintenance.$inferInsert;
 
 export * from './auth.schema';

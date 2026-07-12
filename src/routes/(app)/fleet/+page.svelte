@@ -5,8 +5,13 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Button } from '$lib/components/ui/button';
 	import { Search, Plus } from '@lucide/svelte';
+	import Addvehicle, { openAddVehicle } from '$lib/components/custom/dialog/addVehicle.svelte';
+	import { invalidateAll } from '$app/navigation';
 
 	let { data } = $props();
+
+	// Read-only derived list from SvelteKit page data
+	let vehicles = $derived([...data.vehicles]);
 
 	// Bound states for filters
 	let selectedType = $state('All');
@@ -15,7 +20,7 @@
 
 	// Client-side filtering logic
 	let filteredVehicles = $derived(
-		data.vehicles.filter((v) => {
+		vehicles.filter((v) => {
 			if (selectedType !== 'All' && v.type !== selectedType) return false;
 			if (selectedStatus !== 'All' && v.status !== selectedStatus) return false;
 			if (
@@ -26,6 +31,15 @@
 			return true;
 		})
 	);
+
+	// Check if user is authorized to add a vehicle
+	const canAdd = $derived(['ADMIN', 'FLEET_MANAGER'].includes(data.role));
+
+	const handleAddVehicle = () => {
+		openAddVehicle(async () => {
+			await invalidateAll();
+		});
+	};
 
 	// Formatters
 	const formatCurrency = (val: string | number) => {
@@ -42,6 +56,8 @@
 		return `${num} kg`;
 	};
 </script>
+
+<Addvehicle />
 
 <div class="p-6 md:p-8 space-y-6 mx-auto">
 	<div class="flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -90,10 +106,12 @@
 		</div>
 
 		<!-- Add Vehicle Button -->
-		<Button>
-			<Plus />
-			Add Vehicle
-		</Button>
+		{#if canAdd}
+			<Button onclick={handleAddVehicle}>
+				<Plus />
+				Add Vehicle
+			</Button>
+		{/if}
 	</div>
 
 	<!-- Table -->

@@ -1,42 +1,88 @@
-# sv
+# TransitOps Odoo
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A modern, full-stack web application built with SvelteKit, designed for transit operations.
 
-## Creating a project
+## 🚀 Tech Stack
 
-If you're seeing this, you've probably already done this step. Congrats!
+- **Framework**: [SvelteKit](https://kit.svelte.dev/) (Svelte 5)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) & [shadcn-svelte](https://www.shadcn-svelte.com/)
+- **Database ORM**: [Drizzle ORM](https://orm.drizzle.team/)
+- **Database**: PostgreSQL (via [Neon Database](https://neon.tech/))
+- **Authentication**: [Better Auth](https://better-auth.com/)
+- **Testing**: [Vitest](https://vitest.dev/) (Unit) & [Playwright](https://playwright.dev/) (E2E)
+- **Deployment Adapter**: Vercel Adapter
 
-```sh
-# create a new project
-npx sv create my-app
+## 📦 Prerequisites
+
+Make sure you have the following installed:
+
+- Node.js (v24 or later recommended)
+- npm, pnpm, or bun
+
+## 🛠️ Getting Started
+
+### 1. Install Dependencies
+
+Clone the repository and install the dependencies:
+
+```bash
+bun install
 ```
 
-To recreate this project with the same configuration:
+### 2. Environment Variables
 
-```sh
-# recreate this project
-bun x sv@0.16.2 create --template minimal --types ts --add prettier eslint vitest="usages:unit,component" tailwindcss="plugins:none" sveltekit-adapter="adapter:vercel" drizzle="database:postgresql+postgresql:neon" better-auth="demo:password" mcp="ide:other+setup:remote" playwright --install bun .
+Create a `.env` file based on `.env.example`:
+
+```bash
+cp .env.example .env
 ```
 
-## Developing
+Fill in the required variables in `.env`:
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+- `DATABASE_URL`: Your PostgreSQL connection string.
+- `BETTER_AUTH_SECRET`: A high entropy secret for authentication (minimum 32 characters).
+- `ORIGIN`: The origin URL for the app (e.g., `http://localhost:5173` for local development).
 
-```sh
-npm run dev
+### 3. Database Setup
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+Once your `DATABASE_URL` is set, push the schema to your database:
+
+```bash
+bun run db:push
 ```
 
-## Building
+### 4. Run the Development Server
 
-To create a production version of your app:
+Start the application in development mode:
 
-```sh
-npm run build
+```bash
+bun run dev
+# To automatically open in your browser
+bun run dev -- --open
 ```
 
-You can preview the production build with `npm run preview`.
+## 📜 Available Scripts
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+- `bun run dev`: Starts the development server.
+- `bun run build`: Creates a production-ready build.
+- `bun run preview`: Previews the production build locally.
+- `bun run check`: Runs Svelte checks and TypeScript validation.
+- `bun run lint`: Lints the codebase with ESLint and Prettier.
+- `bun run format`: Formats code using Prettier.
+- `bun run test`: Runs all tests (Unit + E2E).
+- `bun run test:unit`: Runs unit tests via Vitest.
+- `bun run test:e2e`: Runs end-to-end tests via Playwright.
+- `bun run db:push`: Pushes schema changes directly to the database.
+- `bun run db:generate`: Generates database migrations.
+- `bun run db:studio`: Opens Drizzle Studio to inspect database data.
+- `bun run auth:schema`: Generates Better Auth schema for Drizzle.
+
+## 🏗️ Building for Production
+
+To create a production build of your app:
+
+```bash
+bun --bun run build
+```
+
+You can preview the production build with `bun --bun run preview`.

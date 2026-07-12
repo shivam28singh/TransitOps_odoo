@@ -7,6 +7,7 @@ declare global {
 		interface Locals {
 			user?: User;
 			session?: Session;
+			employee?: typeof import('$lib/server/db/schema').employee.$inferSelect | null;
 		}
 
 		// interface Error {}

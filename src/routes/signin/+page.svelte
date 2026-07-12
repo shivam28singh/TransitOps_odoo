@@ -13,7 +13,7 @@
 	let homeHref = $state('/');
 	let email = $state('');
 	let password = $state('');
-	let role = $state('Dispatcher');
+	let role = $state('DISPATCHER');
 	let rememberMe = $state(false);
 	let isSubmitting = $state(false);
 	let errorMessage = $state('');
@@ -125,7 +125,7 @@
 				<p class="text-sm text-muted-foreground">Enter your credentials to continue</p>
 			</div>
 
-			<form class="space-y-4" method="POST" use:enhance={submitHandler}>
+			<form class="space-y-4" method="POST" action="?/signin" use:enhance={submitHandler}>
 				{#if errorMessage}
 					<div
 						class="p-3 text-xs text-destructive border border-destructive/20 bg-destructive/10 rounded-md"
@@ -190,11 +190,16 @@
 							>
 								{role || 'Select a role'}
 							</Select.Trigger>
+
 							<Select.Content>
-								<Select.Item value="Fleet Manager" label="Fleet Manager" />
-								<Select.Item value="Dispatcher" label="Dispatcher" />
-								<Select.Item value="Safety Officer" label="Safety Officer" />
-								<Select.Item value="Financial Analyst" label="Financial Analyst" />
+								<Select.Group>
+									<Select.GroupHeading>Role</Select.GroupHeading>
+									<Select.Item value="FLEET_MANAGER" label="Fleet Manager" />
+									<Select.Item value="DISPATCHER" label="Dispatcher" />
+									<Select.Item value="SAFETY_OFFICER" label="Safety Officer" />
+									<Select.Item value="FINANCIAL_ANALYST" label="Financial Analyst" />
+									<Select.Item value="ADMIN" label="Admin" />
+								</Select.Group>
 							</Select.Content>
 						</Select.Root>
 					</div>
@@ -213,6 +218,7 @@
 						Remember me
 					</label>
 					<Button
+						variant="link"
 						type="submit"
 						formaction="?/forgotPassword"
 						formnovalidate
@@ -225,6 +231,13 @@
 				<Button class="w-full h-10" type="submit" disabled={isSubmitting}>
 					{isSubmitting ? 'Signing in...' : 'Sign In'}
 				</Button>
+				<p class="text-xs text-center text-muted-foreground pt-2">
+					Not a user?
+					<a
+						href={resolve('/signup')}
+						class="font-semibold text-primary hover:underline underline-offset-4">Sign Up</a
+					>
+				</p>
 			</form>
 
 			<div class="pt-4 border-t border-muted/50 space-y-1.5 text-xs text-muted-foreground">

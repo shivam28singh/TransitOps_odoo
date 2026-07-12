@@ -57,7 +57,7 @@
 				<h1 class="text-3xl font-extrabold tracking-tight">TransitOps</h1>
 				<p class="text-sm font-medium text-muted-foreground">Smart Transport Operations Platform</p>
 			</div>
-			
+
 			<div class="space-y-2">
 				<h2 class="text-lg font-semibold tracking-tight">One login, four roles:</h2>
 				<ul class="space-y-1 text-sm text-muted-foreground list-disc pl-4">
@@ -169,8 +169,11 @@
 			</form>
 
 			<p class="text-xs text-center text-muted-foreground">
-				Remember your password? 
-				<a href={resolve('/signin')} class="font-semibold text-primary hover:underline underline-offset-4">Sign In</a>
+				Remember your password?
+				<a
+					href={resolve('/signin')}
+					class="font-semibold text-primary hover:underline underline-offset-4">Sign In</a
+				>
 			</p>
 		</div>
 	</div>

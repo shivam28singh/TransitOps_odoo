@@ -4,14 +4,15 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
 import { db } from '$lib/server/db';
-import { admin } from 'better-auth/plugins';
 import { sendEmailVerificationEmail, sendPasswordResetEmail } from './email';
+import { dash } from '@better-auth/infra';
 
 export const auth = betterAuth({
 	appName: 'TransitOps',
 	baseURL: env.ORIGIN,
 	secret: env.BETTER_AUTH_SECRET,
 	database: drizzleAdapter(db, { provider: 'pg' }),
+
 	emailAndPassword: {
 		enabled: true,
 		requireEmailVerification: true,
@@ -43,7 +44,7 @@ export const auth = betterAuth({
 		}
 	},
 	plugins: [
-		admin(),
+		dash(),
 		sveltekitCookies(getRequestEvent) // make sure this is the last plugin in the array
 	]
 });

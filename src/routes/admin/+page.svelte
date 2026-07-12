@@ -18,6 +18,7 @@
 
 	// Keep track of which employee role is being updated to show a loading state if needed
 	let updatingId = $state<number | null>(null);
+	let updatingStatusId = $state<number | null>(null);
 
 	const roleUpdateHandler = () => {
 		return async ({ update, result, formData }) => {
@@ -30,6 +31,21 @@
 				toast.success('Role updated successfully');
 			} else if (result.type === 'failure') {
 				toast.error((result.data as any)?.error || 'Failed to update role');
+			}
+		};
+	};
+
+	const statusUpdateHandler = () => {
+		return async ({ update, result, formData }) => {
+			const empId = Number(formData.get('employeeId'));
+			updatingStatusId = empId;
+			await update({ reset: false }); // Don't reset the form to avoid visual jumps
+			updatingStatusId = null;
+
+			if (result.type === 'success') {
+				toast.success('Status updated successfully');
+			} else if (result.type === 'failure') {
+				toast.error((result.data as any)?.error || 'Failed to update status');
 			}
 		};
 	};
@@ -74,11 +90,26 @@
 						<Table.Cell class="font-medium">{employee.fullName}</Table.Cell>
 						<Table.Cell>{employee.email}</Table.Cell>
 						<Table.Cell>
-							{#if employee.status === 'ACTIVE'}
-								<Badge variant="default">Active</Badge>
-							{:else}
-								<Badge variant="secondary">Inactive</Badge>
-							{/if}
+							<form
+								method="POST"
+								action="?/updateStatus"
+								use:enhance={statusUpdateHandler}
+								class="inline-block"
+							>
+								<input type="hidden" name="employeeId" value={employee.id} />
+								<input type="hidden" name="status" value={employee.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE'} />
+								<button
+									type="submit"
+									class="hover:opacity-80 transition-opacity"
+									disabled={updatingStatusId === employee.id || employee.userId === data.user?.id}
+								>
+									{#if employee.status === 'ACTIVE'}
+										<Badge variant="default" class="cursor-pointer">Active</Badge>
+									{:else}
+										<Badge variant="secondary" class="cursor-pointer">Inactive</Badge>
+									{/if}
+								</button>
+							</form>
 						</Table.Cell>
 						<Table.Cell>
 							<!-- Form to update the role automatically on change -->
@@ -89,7 +120,7 @@
 								class="flex items-center gap-2"
 							>
 								<input type="hidden" name="employeeId" value={employee.id} />
-								<Select.Root type="single" name="role" value={employee.role}>
+								<Select.Root type="single" name="role" value={employee.role} disabled={employee.userId === data.user?.id}>
 									<Select.Trigger class="w-[180px] h-8 text-xs">
 										{employee.role}
 									</Select.Trigger>
@@ -111,7 +142,7 @@
 									size="sm"
 									variant="outline"
 									class="h-8 px-2"
-									disabled={updatingId === employee.id}
+									disabled={updatingId === employee.id || employee.userId === data.user?.id}
 								>
 									{updatingId === employee.id ? '...' : 'Save'}
 								</Button>

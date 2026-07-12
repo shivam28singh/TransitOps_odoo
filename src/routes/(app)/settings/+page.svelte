@@ -79,11 +79,7 @@
 			</div>
 
 			<div class="pt-2">
-				<Button
-					class="w-full sm:w-auto bg-sky-500 hover:bg-sky-600 text-white font-medium"
-					disabled={saving || data.role !== 'ADMIN'}
-					onclick={saveSettings}
-				>
+				<Button disabled={saving || data.role !== 'ADMIN'} onclick={saveSettings}>
 					{saving ? 'Saving...' : 'Save changes'}
 				</Button>
 				{#if data.role !== 'ADMIN'}

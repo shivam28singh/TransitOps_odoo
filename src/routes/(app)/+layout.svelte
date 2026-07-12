@@ -46,13 +46,13 @@
 
 			switch (role) {
 				case 'FLEET_MANAGER':
-					return ['Fleet', 'Maintenance'].includes(link.label);
+					return ['Fleet', 'Maintenance', 'Drivers', 'Analytics'].includes(link.label);
 				case 'DISPATCHER':
-					return ['Trips', 'Drivers', 'Fleet'].includes(link.label);
+					return ['Fleet', 'Trips'].includes(link.label);
 				case 'SAFETY_OFFICER':
-					return ['Drivers', 'Analytics'].includes(link.label);
+					return ['Drivers', 'Trips'].includes(link.label);
 				case 'FINANCIAL_ANALYST':
-					return ['Fuel & Expenses', 'Analytics'].includes(link.label);
+					return ['Fleet', 'Fuel & Expenses', 'Analytics'].includes(link.label);
 				case 'DRIVER':
 					return ['Trips'].includes(link.label);
 				default:
@@ -158,6 +158,16 @@
 				</Sidebar.Trigger>
 			</div>
 			<div class="flex items-center gap-4">
+				<div class="flex items-center gap-3 border-r border-border pr-4">
+					<span class="text-sm font-medium text-muted-foreground hidden sm:inline-block">
+						{employee?.role ? employee.role.replace('_', ' ') : 'GUEST'}
+					</span>
+					<Avatar.Root class="size-8">
+						<Avatar.Fallback class="bg-primary/10 text-primary font-semibold">
+							{user?.name?.charAt(0).toUpperCase() || 'U'}
+						</Avatar.Fallback>
+					</Avatar.Root>
+				</div>
 				<Themetoggler />
 			</div>
 		</header>

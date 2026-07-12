@@ -40,6 +40,10 @@ export const actions: Actions = {
 			return fail(400, { error: 'Employee ID and Role are required.' });
 		}
 
+		if (parseInt(employeeId) === locals.employee.id) {
+			return fail(400, { error: 'You cannot change your own role.' });
+		}
+
 		try {
 			await db
 				.update(employee)
@@ -50,6 +54,35 @@ export const actions: Actions = {
 		} catch (error) {
 			console.error('Error updating role:', error);
 			return fail(500, { error: 'Failed to update employee role.' });
+		}
+	},
+	updateStatus: async ({ request, locals }) => {
+		if (!locals.employee || locals.employee.role !== 'ADMIN') {
+			return fail(403, { error: 'Forbidden: Admin access required.' });
+		}
+
+		const data = await request.formData();
+		const employeeId = data.get('employeeId') as string;
+		const newStatus = data.get('status') as string;
+
+		if (!employeeId || !newStatus) {
+			return fail(400, { error: 'Employee ID and Status are required.' });
+		}
+
+		if (parseInt(employeeId) === locals.employee.id) {
+			return fail(400, { error: 'You cannot change your own status.' });
+		}
+
+		try {
+			await db
+				.update(employee)
+				.set({ status: newStatus as any })
+				.where(eq(employee.id, parseInt(employeeId)));
+
+			return { success: true };
+		} catch (error) {
+			console.error('Error updating status:', error);
+			return fail(500, { error: 'Failed to update employee status.' });
 		}
 	}
 };

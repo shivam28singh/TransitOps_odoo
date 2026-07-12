@@ -19,7 +19,7 @@ export const actions: Actions = {
 		const email = formData.get('email') as string;
 		const password = formData.get('password') as string;
 		const role = formData.get('role') as string;
-		
+
 		if (!email || !password || !role) {
 			return fail(400, { error: 'Email, password, and role are required.' });
 		}
@@ -36,6 +36,14 @@ export const actions: Actions = {
 			const emp = await db.query.employee.findFirst({
 				where: eq(employee.userId, res.user.id)
 			});
+			if (!emp || emp.status === 'INACTIVE') {
+				await auth.api.signOut({
+					headers: event.request.headers
+				});
+				return fail(400, {
+					error: 'Your email is verified, but admin has yet to approve your account.'
+				});
+			}
 
 			if (!emp || emp.role !== role) {
 				await auth.api.signOut({

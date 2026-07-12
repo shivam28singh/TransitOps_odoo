@@ -83,7 +83,8 @@
 		<Dialog.Header>
 			<Dialog.Title>Add New Driver</Dialog.Title>
 			<Dialog.Description>
-				Enter profile details to create a new driver. An associated system user account will be created.
+				Enter profile details to create a new driver. An associated system user account will be
+				created.
 			</Dialog.Description>
 		</Dialog.Header>
 
@@ -185,7 +186,9 @@
 				</div>
 
 				<div class="space-y-1.5 col-span-2">
-					<label for="status" class="text-xs font-medium text-muted-foreground">Driver Status *</label>
+					<label for="status" class="text-xs font-medium text-muted-foreground"
+						>Driver Status *</label
+					>
 					<Select.Root type="single" name="status" bind:value={status}>
 						<Select.Trigger class="w-full">
 							{status === 'AVAILABLE'
@@ -206,7 +209,7 @@
 				</div>
 			</div>
 
-			<Dialog.Footer class="pt-4 border-t border-border mt-4">
+			<Dialog.Footer>
 				<Button type="button" variant="outline" onclick={() => (open = false)}>Cancel</Button>
 				<Button type="submit" disabled={submitting}>
 					{submitting ? 'Adding...' : 'Add Driver'}

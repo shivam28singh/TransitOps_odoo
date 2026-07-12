@@ -176,7 +176,7 @@
 				</div>
 			</div>
 
-			<Dialog.Footer class="pt-4 border-t border-border mt-4">
+			<Dialog.Footer>
 				<Button type="button" variant="outline" onclick={() => (open = false)}>Cancel</Button>
 				<Button type="submit" disabled={submitting}>
 					{submitting ? 'Adding...' : 'Add Vehicle'}

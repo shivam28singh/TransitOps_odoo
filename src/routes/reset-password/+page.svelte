@@ -1,20 +1,17 @@
 <script lang="ts">
-	import { AtSignIcon, ChevronLeftIcon, LockIcon } from '@lucide/svelte';
+	import { ChevronLeftIcon, LockIcon } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { FloatingPaths } from '$lib/components/ui/floating-paths';
 	import { InputGroup, InputGroupAddon, InputGroupInput } from '$lib/components/ui/input-group';
-	import * as Select from '$lib/components/ui/select';
 	import { resolve } from '$app/paths';
 	import { toast } from 'svelte-sonner';
 	import { enhance } from '$app/forms';
 
-	let { form } = $props();
+	let { data, form } = $props();
 
 	let homeHref = $state('/');
-	let email = $state('');
 	let password = $state('');
-	let role = $state('Dispatcher');
-	let rememberMe = $state(false);
+	let confirmPassword = $state('');
 	let isSubmitting = $state(false);
 	let errorMessage = $state('');
 
@@ -24,32 +21,17 @@
 		}
 	});
 
-	const submitHandler = ({ action, cancel }) => {
-		const isForgotPassword = action.search.includes('forgotPassword');
-		if (isForgotPassword && !email) {
-			toast.error('Please enter your email.');
-			cancel();
-			return;
-		}
-
+	const submitHandler = () => {
 		isSubmitting = true;
 		errorMessage = '';
 		return async ({ update, result }) => {
 			await update();
 			isSubmitting = false;
-			if (isForgotPassword) {
-				if (result.type === 'failure') {
-					toast.error((result.data as any)?.error || 'Failed to send password reset email.');
-				} else if (result.type === 'success') {
-					toast.success('Password reset email sent.');
-				}
-			} else {
-				if (result.type === 'failure') {
-					errorMessage = (result.data as any)?.error || 'Invalid credentials.';
-					toast.error('Invalid credentials.');
-				} else if (result.type === 'redirect') {
-					toast.success('Successfully signed in!');
-				}
+			if (result.type === 'failure') {
+				errorMessage = (result.data as any)?.error || 'Failed to reset password.';
+				toast.error('Failed to reset password.');
+			} else if (result.type === 'redirect') {
+				toast.success('Password reset successfully! Please sign in.');
 			}
 		};
 	};
@@ -75,7 +57,7 @@
 				<h1 class="text-3xl font-extrabold tracking-tight">TransitOps</h1>
 				<p class="text-sm font-medium text-muted-foreground">Smart Transport Operations Platform</p>
 			</div>
-
+			
 			<div class="space-y-2">
 				<h2 class="text-lg font-semibold tracking-tight">One login, four roles:</h2>
 				<ul class="space-y-1 text-sm text-muted-foreground list-disc pl-4">
@@ -88,7 +70,6 @@
 		</div>
 		<div class="mt-auto pt-4 z-100! text-xs text-muted-foreground">TRANSITOPS © 2026</div>
 
-		<!-- Keeping the exact FloatingPaths animation -->
 		<div class="absolute inset-0">
 			<FloatingPaths position={1} />
 			<FloatingPaths position={-1} />
@@ -121,8 +102,8 @@
 			</a>
 
 			<div class="flex flex-col space-y-1">
-				<h1 class="text-2xl font-bold tracking-wide">Sign in to your account</h1>
-				<p class="text-sm text-muted-foreground">Enter your credentials to continue</p>
+				<h1 class="text-2xl font-bold tracking-wide">Reset your password</h1>
+				<p class="text-sm text-muted-foreground">Enter your new password below.</p>
 			</div>
 
 			<form class="space-y-4" method="POST" use:enhance={submitHandler}>
@@ -135,33 +116,15 @@
 					</div>
 				{/if}
 
-				<div class="space-y-3">
-					<div class="space-y-1">
-						<label
-							for="email"
-							class="text-[10px] font-bold text-muted-foreground tracking-wider uppercase"
-							>Email</label
-						>
-						<InputGroup>
-							<InputGroupInput
-								id="email"
-								name="email"
-								bind:value={email}
-								placeholder="Raven.k@transitops.in"
-								type="email"
-								required
-							/>
-							<InputGroupAddon align="inline-start">
-								<AtSignIcon />
-							</InputGroupAddon>
-						</InputGroup>
-					</div>
+				<!-- Hidden Token Input -->
+				<input type="hidden" name="token" value={data.token} />
 
+				<div class="space-y-3">
 					<div class="space-y-1">
 						<label
 							for="password"
 							class="text-[10px] font-bold text-muted-foreground tracking-wider uppercase"
-							>Password</label
+							>New Password</label
 						>
 						<InputGroup>
 							<InputGroupInput
@@ -180,62 +143,35 @@
 
 					<div class="space-y-1">
 						<label
-							for="role"
+							for="confirmPassword"
 							class="text-[10px] font-bold text-muted-foreground tracking-wider uppercase"
-							>Role (RBAC)</label
+							>Confirm New Password</label
 						>
-						<Select.Root type="single" bind:value={role} name="role">
-							<Select.Trigger
-								class="w-full h-10 text-left bg-transparent border-input focus:ring-2 focus:ring-ring focus:ring-offset-2"
-							>
-								{role || 'Select a role'}
-							</Select.Trigger>
-							<Select.Content>
-								<Select.Item value="Fleet Manager" label="Fleet Manager" />
-								<Select.Item value="Dispatcher" label="Dispatcher" />
-								<Select.Item value="Safety Officer" label="Safety Officer" />
-								<Select.Item value="Financial Analyst" label="Financial Analyst" />
-							</Select.Content>
-						</Select.Root>
+						<InputGroup>
+							<InputGroupInput
+								id="confirmPassword"
+								name="confirmPassword"
+								bind:value={confirmPassword}
+								placeholder="********"
+								type="password"
+								required
+							/>
+							<InputGroupAddon align="inline-start">
+								<LockIcon />
+							</InputGroupAddon>
+						</InputGroup>
 					</div>
 				</div>
 
-				<div class="flex items-center justify-between">
-					<label
-						class="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer hover:text-foreground"
-					>
-						<input
-							type="checkbox"
-							name="rememberMe"
-							bind:checked={rememberMe}
-							class="rounded border-input bg-transparent shadow-sm size-3.5 accent-primary"
-						/>
-						Remember me
-					</label>
-					<Button
-						type="submit"
-						formaction="?/forgotPassword"
-						formnovalidate
-						class="text-xs font-semibold text-primary hover:underline underline-offset-4"
-					>
-						Forgot password?
-					</Button>
-				</div>
-
 				<Button class="w-full h-10" type="submit" disabled={isSubmitting}>
-					{isSubmitting ? 'Signing in...' : 'Sign In'}
+					{isSubmitting ? 'Resetting...' : 'Reset Password'}
 				</Button>
 			</form>
 
-			<div class="pt-4 border-t border-muted/50 space-y-1.5 text-xs text-muted-foreground">
-				<p class="font-medium">Access is scoped by role after login:</p>
-				<ul class="space-y-1 pl-1 text-[11px]">
-					<li>• Fleet Manager &rarr; Fleet, Maintenance</li>
-					<li>• Dispatcher &rarr; Dashboard, Trips</li>
-					<li>• Safety Officer &rarr; Drivers, Compliance</li>
-					<li>• Financial Analyst &rarr; Fuel & Expenses, Analytics</li>
-				</ul>
-			</div>
+			<p class="text-xs text-center text-muted-foreground">
+				Remember your password? 
+				<a href={resolve('/signin')} class="font-semibold text-primary hover:underline underline-offset-4">Sign In</a>
+			</p>
 		</div>
 	</div>
 </main>

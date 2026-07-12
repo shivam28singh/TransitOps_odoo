@@ -21,8 +21,8 @@ export const PUT: RequestHandler = async (event) => {
 			return json({ error: 'Invalid maintenance ID' }, { status: 400 });
 		}
 
-		const result = await db.transaction(async (tx) => {
-			const record = await tx.query.maintenance.findFirst({
+		const result = async () => {
+			const record = await db.query.maintenance.findFirst({
 				where: eq(maintenance.id, maintenanceId)
 			});
 			if (!record) {
@@ -33,16 +33,16 @@ export const PUT: RequestHandler = async (event) => {
 			}
 
 			// Update maintenance status
-			await tx
+			await db
 				.update(maintenance)
 				.set({ status: 'COMPLETED' })
 				.where(eq(maintenance.id, maintenanceId));
 
 			// Update vehicle status back to AVAILABLE
-			await tx.update(vehicle).set({ status: 'AVAILABLE' }).where(eq(vehicle.id, record.vehicleId));
+			await db.update(vehicle).set({ status: 'AVAILABLE' }).where(eq(vehicle.id, record.vehicleId));
 
 			return { status: 'COMPLETED' };
-		});
+		};
 
 		return json({ success: true, result });
 	} catch (e: any) {

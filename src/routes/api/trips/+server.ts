@@ -30,9 +30,9 @@ export const POST: RequestHandler = async (event) => {
 		const body = await request.json();
 		const parsedData = CreateTripSchema.parse(body);
 
-		const result = await db.transaction(async (tx) => {
+		const result = async () => {
 			// Check vehicle
-			const selectedVehicle = await tx.query.vehicle.findFirst({
+			const selectedVehicle = await db.query.vehicle.findFirst({
 				where: eq(vehicle.id, parsedData.vehicleId)
 			});
 			if (!selectedVehicle || selectedVehicle.status !== 'AVAILABLE') {
@@ -43,7 +43,7 @@ export const POST: RequestHandler = async (event) => {
 			}
 
 			// Check driver
-			const selectedDriver = await tx.query.driver.findFirst({
+			const selectedDriver = await db.query.driver.findFirst({
 				where: eq(driver.id, parsedData.driverId)
 			});
 			if (!selectedDriver || selectedDriver.status !== 'AVAILABLE') {
@@ -54,7 +54,7 @@ export const POST: RequestHandler = async (event) => {
 			}
 
 			// Create Trip
-			const [newTrip] = await tx
+			const [newTrip] = await db
 				.insert(trip)
 				.values({
 					vehicleId: parsedData.vehicleId,
@@ -69,18 +69,18 @@ export const POST: RequestHandler = async (event) => {
 
 			// If dispatched immediately, update vehicle and driver statuses
 			if (parsedData.status === 'DISPATCHED') {
-				await tx
+				await db
 					.update(vehicle)
 					.set({ status: 'ON_TRIP' })
 					.where(eq(vehicle.id, parsedData.vehicleId));
-				await tx
+				await db
 					.update(driver)
 					.set({ status: 'ON_TRIP' })
 					.where(eq(driver.id, parsedData.driverId));
 			}
 
 			return newTrip;
-		});
+		};
 
 		return json({ success: true, trip: result });
 	} catch (e: any) {

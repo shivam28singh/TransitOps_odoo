@@ -32,9 +32,9 @@ export const PUT: RequestHandler = async (event) => {
 		const body = await request.json();
 		const parsedData = UpdateTripSchema.parse(body);
 
-		const result = await db.transaction(async (tx) => {
+		const result = async () => {
 			// Fetch the trip
-			const currentTrip = await tx.query.trip.findFirst({
+			const currentTrip = await db.query.trip.findFirst({
 				where: eq(trip.id, tripId)
 			});
 			if (!currentTrip) {
@@ -47,7 +47,7 @@ export const PUT: RequestHandler = async (event) => {
 			// Complete workflow
 			if (parsedData.status === 'COMPLETED') {
 				// 1. Update Trip
-				await tx
+				await db
 					.update(trip)
 					.set({
 						status: 'COMPLETED',
@@ -57,7 +57,7 @@ export const PUT: RequestHandler = async (event) => {
 
 				// 2. Update Vehicle Odometer
 				if (parsedData.odometerKm !== undefined) {
-					await tx
+					await db
 						.update(vehicle)
 						.set({
 							odometerKm: parsedData.odometerKm.toString(),
@@ -65,7 +65,7 @@ export const PUT: RequestHandler = async (event) => {
 						})
 						.where(eq(vehicle.id, currentTrip.vehicleId));
 				} else {
-					await tx
+					await db
 						.update(vehicle)
 						.set({ status: 'AVAILABLE' })
 						.where(eq(vehicle.id, currentTrip.vehicleId));
@@ -77,7 +77,7 @@ export const PUT: RequestHandler = async (event) => {
 					parsedData.fuelCost !== undefined &&
 					parsedData.fuelLiters > 0
 				) {
-					await tx.insert(fuelLog).values({
+					await db.insert(fuelLog).values({
 						vehicleId: currentTrip.vehicleId,
 						liters: parsedData.fuelLiters.toString(),
 						cost: parsedData.fuelCost.toString(),
@@ -86,28 +86,28 @@ export const PUT: RequestHandler = async (event) => {
 				}
 
 				// 4. Update Driver
-				await tx
+				await db
 					.update(driver)
 					.set({ status: 'AVAILABLE' })
 					.where(eq(driver.id, currentTrip.driverId));
 			}
 			// Cancel workflow
 			else if (parsedData.status === 'CANCELLED') {
-				await tx.update(trip).set({ status: 'CANCELLED' }).where(eq(trip.id, tripId));
+				await db.update(trip).set({ status: 'CANCELLED' }).where(eq(trip.id, tripId));
 
-				await tx
+				await db
 					.update(vehicle)
 					.set({ status: 'AVAILABLE' })
 					.where(eq(vehicle.id, currentTrip.vehicleId));
 
-				await tx
+				await db
 					.update(driver)
 					.set({ status: 'AVAILABLE' })
 					.where(eq(driver.id, currentTrip.driverId));
 			}
 
 			return { status: parsedData.status };
-		});
+		};
 
 		return json({ success: true, result });
 	} catch (e: any) {

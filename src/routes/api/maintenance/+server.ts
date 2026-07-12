@@ -29,9 +29,9 @@ export const POST: RequestHandler = async (event) => {
 		const body = await request.json();
 		const parsedData = CreateMaintenanceSchema.parse(body);
 
-		const result = await db.transaction(async (tx) => {
+		const result = async () => {
 			// Check if vehicle exists
-			const selectedVehicle = await tx.query.vehicle.findFirst({
+			const selectedVehicle = await db.query.vehicle.findFirst({
 				where: eq(vehicle.id, parsedData.vehicleId)
 			});
 			if (!selectedVehicle) {
@@ -39,7 +39,7 @@ export const POST: RequestHandler = async (event) => {
 			}
 
 			// Create Maintenance record
-			const [newRecord] = await tx
+			const [newRecord] = await db
 				.insert(maintenance)
 				.values({
 					vehicleId: parsedData.vehicleId,
@@ -52,14 +52,14 @@ export const POST: RequestHandler = async (event) => {
 
 			// If active, update vehicle status to IN_SHOP
 			if (parsedData.status === 'ACTIVE') {
-				await tx
+				await db
 					.update(vehicle)
 					.set({ status: 'IN_SHOP' })
 					.where(eq(vehicle.id, parsedData.vehicleId));
 			}
 
 			return newRecord;
-		});
+		};
 
 		return json({ success: true, record: result });
 	} catch (e: any) {

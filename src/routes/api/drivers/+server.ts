@@ -7,7 +7,7 @@ import { z } from 'zod';
 
 const AddDriverSchema = z.object({
 	fullName: z.string().min(1, 'Full Name is required'),
-	email: z.string().email('Invalid email address'),
+	email: z.email('Invalid email address'),
 	phone: z.string().min(10, 'Contact Number must be at least 10 digits'),
 	licenseNumber: z.string().min(1, 'License Number is required'),
 	licenseCategory: z.string().min(1, 'License Category is required'),
@@ -43,10 +43,10 @@ export const POST: RequestHandler = async (event) => {
 		const body = await request.json();
 		const parsedData = AddDriverSchema.parse(body);
 
-		// Execute in a transaction to guarantee data integrity across user, employee, and driver
-		const result = await db.transaction(async (tx) => {
+		// Execute sequentially since Neon HTTP driver doesn't support interactive transactions
+		const result = await (async () => {
 			// Check if email already exists
-			const existingUser = await tx.query.user.findFirst({
+			const existingUser = await db.query.user.findFirst({
 				where: eq(user.email, parsedData.email)
 			});
 			if (existingUser) {
@@ -56,7 +56,7 @@ export const POST: RequestHandler = async (event) => {
 			const userId = crypto.randomUUID();
 
 			// 1. Create User
-			await tx.insert(user).values({
+			await db.insert(user).values({
 				id: userId,
 				name: parsedData.fullName,
 				email: parsedData.email,
@@ -64,7 +64,7 @@ export const POST: RequestHandler = async (event) => {
 			});
 
 			// 2. Create Employee
-			const [newEmployee] = await tx
+			const [newEmployee] = await db
 				.insert(employee)
 				.values({
 					userId: userId,
@@ -76,7 +76,7 @@ export const POST: RequestHandler = async (event) => {
 				.returning();
 
 			// 3. Create Driver
-			const [newDriver] = await tx
+			const [newDriver] = await db
 				.insert(driver)
 				.values({
 					employeeId: newEmployee.id,

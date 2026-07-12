@@ -22,10 +22,25 @@ export const employeeRoleEnum = pgEnum('employee_role', [
 ]);
 
 export const employeeStatusEnum = pgEnum('employee_status', ['ACTIVE', 'INACTIVE']);
-export const driverStatusEnum = pgEnum('driver_status', ['AVAILABLE', 'ON_TRIP', 'OFF_DUTY', 'SUSPENDED']);
-export const vehicleStatusEnum = pgEnum('vehicle_status', ['AVAILABLE', 'ON_TRIP', 'IN_SHOP', 'RETIRED']);
+export const driverStatusEnum = pgEnum('driver_status', [
+	'AVAILABLE',
+	'ON_TRIP',
+	'OFF_DUTY',
+	'SUSPENDED'
+]);
+export const vehicleStatusEnum = pgEnum('vehicle_status', [
+	'AVAILABLE',
+	'ON_TRIP',
+	'IN_SHOP',
+	'RETIRED'
+]);
 export const vehicleTypeEnum = pgEnum('vehicle_type', ['VAN', 'TRUCK', 'MINI']);
-export const tripStatusEnum = pgEnum('trip_status', ['SCHEDULED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED']);
+export const tripStatusEnum = pgEnum('trip_status', [
+	'DRAFT',
+	'DISPATCHED',
+	'COMPLETED',
+	'CANCELLED'
+]);
 
 // ============================================================
 // TABLES
@@ -82,14 +97,19 @@ export const vehicle = pgTable('vehicle', {
 
 export const trip = pgTable('trip', {
 	id: serial('id').primaryKey(),
-	vehicleId: integer('vehicle_id').notNull().references(() => vehicle.id),
-	driverId: integer('driver_id').notNull().references(() => driver.id),
+	vehicleId: integer('vehicle_id')
+		.notNull()
+		.references(() => vehicle.id),
+	driverId: integer('driver_id')
+		.notNull()
+		.references(() => driver.id),
 	startTime: timestamp('start_time'),
 	endTime: timestamp('end_time'),
 	startLocation: text('start_location').notNull(),
 	endLocation: text('end_location').notNull(),
 	distanceKm: numeric('distance_km', { precision: 10, scale: 2 }),
-	status: tripStatusEnum('status').default('SCHEDULED').notNull(),
+	cargoWeightKg: numeric('cargo_weight_kg', { precision: 10, scale: 2 }),
+	status: tripStatusEnum('status').default('DRAFT').notNull(),
 	notes: text('notes'),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
 	updatedAt: timestamp('updated_at')
@@ -135,5 +155,20 @@ export const tripRelations = relations(trip, ({ one }) => ({
 		references: [vehicle.id]
 	})
 }));
+
+export type Task = typeof task.$inferSelect;
+export type NewTask = typeof task.$inferInsert;
+
+export type Employee = typeof employee.$inferSelect;
+export type NewEmployee = typeof employee.$inferInsert;
+
+export type Driver = typeof driver.$inferSelect;
+export type NewDriver = typeof driver.$inferInsert;
+
+export type Vehicle = typeof vehicle.$inferSelect;
+export type NewVehicle = typeof vehicle.$inferInsert;
+
+export type Trip = typeof trip.$inferSelect;
+export type NewTrip = typeof trip.$inferInsert;
 
 export * from './auth.schema';

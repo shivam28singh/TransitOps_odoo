@@ -26,7 +26,7 @@ const handleBetterAuth: Handle = async ({ event, resolve }) => {
 	// Basic authorization mapping
 	const guards: Record<string, string[]> = {
 		'/admin': ['ADMIN'],
-		'/fleet': ['ADMIN', 'FLEET_MANAGER'],
+		'/fleet': ['ADMIN', 'FLEET_MANAGER', 'DISPATCHER'],
 		'/finance': ['ADMIN', 'FINANCIAL_ANALYST'],
 		'/safety': ['ADMIN', 'SAFETY_OFFICER']
 	};

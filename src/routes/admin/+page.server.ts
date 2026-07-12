@@ -45,7 +45,7 @@ export const actions: Actions = {
 				.update(employee)
 				.set({ role: newRole as any })
 				.where(eq(employee.id, parseInt(employeeId)));
-				
+
 			return { success: true };
 		} catch (error) {
 			console.error('Error updating role:', error);

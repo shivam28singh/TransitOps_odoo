@@ -51,7 +51,8 @@ export const load: PageServerLoad = async ({ locals }) => {
 	// Assemble final list of drivers with their completion rate
 	const drivers = driversList.map((d) => {
 		const stats = tripStatsMap[d.id] || { completed: 0, total: 0 };
-		const tripCompletion = stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : null;
+		const tripCompletion =
+			stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : null;
 
 		return {
 			...d,

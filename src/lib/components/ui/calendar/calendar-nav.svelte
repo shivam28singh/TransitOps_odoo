@@ -7,14 +7,13 @@
 		class: className,
 		children,
 		...restProps
-	}: WithElementRef<HTMLAttributes<HTMLTableSectionElement>> = $props();
+	}: WithElementRef<HTMLAttributes<HTMLElement>> = $props();
 </script>
 
-<tfoot
-	bind:this={ref}
-	data-slot="table-footer"
-	class={cn('bg-muted/50 border-t font-medium [&>tr]:last:border-b-0', className)}
+<nav
 	{...restProps}
+	bind:this={ref}
+	class={cn('absolute inset-x-0 top-0 flex w-full items-center justify-between gap-1', className)}
 >
 	{@render children?.()}
-</tfoot>
+</nav>

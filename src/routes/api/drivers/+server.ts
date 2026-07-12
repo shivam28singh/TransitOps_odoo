@@ -14,7 +14,11 @@ const AddDriverSchema = z.object({
 	licenseExpiry: z.string().min(1, 'License Expiry Date is required'),
 	safetyScore: z.preprocess(
 		(val) => (val === '' || val === null ? 100 : Number(val)),
-		z.number().min(0, 'Safety Score must be at least 0').max(100, 'Safety Score cannot exceed 100').default(100)
+		z
+			.number()
+			.min(0, 'Safety Score must be at least 0')
+			.max(100, 'Safety Score cannot exceed 100')
+			.default(100)
 	),
 	status: z.enum(['AVAILABLE', 'ON_TRIP', 'OFF_DUTY', 'SUSPENDED']).default('AVAILABLE')
 });
@@ -50,7 +54,7 @@ export const POST: RequestHandler = async (event) => {
 			}
 
 			const userId = crypto.randomUUID();
-			
+
 			// 1. Create User
 			await tx.insert(user).values({
 				id: userId,

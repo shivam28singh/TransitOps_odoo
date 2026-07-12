@@ -1,20 +1,19 @@
 <script lang="ts">
-	import { cn, type WithElementRef } from '$lib/utils.js';
 	import type { HTMLAttributes } from 'svelte/elements';
+	import { cn, type WithElementRef } from '$lib/utils.js';
 
 	let {
 		ref = $bindable(null),
 		class: className,
 		children,
 		...restProps
-	}: WithElementRef<HTMLAttributes<HTMLTableSectionElement>> = $props();
+	}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();
 </script>
 
-<thead
+<div
 	bind:this={ref}
-	data-slot="table-header"
-	class={cn('[&_tr]:border-b', className)}
+	class={cn('relative flex flex-col gap-4 md:flex-row', className)}
 	{...restProps}
 >
 	{@render children?.()}
-</thead>
+</div>

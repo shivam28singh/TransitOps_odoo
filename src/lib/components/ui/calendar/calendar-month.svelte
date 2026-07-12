@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { cn, type WithElementRef } from '$lib/utils.js';
+	import { type WithElementRef, cn } from '$lib/utils.js';
 	import type { HTMLAttributes } from 'svelte/elements';
 
 	let {
@@ -10,11 +10,6 @@
 	}: WithElementRef<HTMLAttributes<HTMLElement>> = $props();
 </script>
 
-<caption
-	bind:this={ref}
-	data-slot="table-caption"
-	class={cn('text-muted-foreground mt-4 text-sm', className)}
-	{...restProps}
->
+<div {...restProps} bind:this={ref} class={cn('flex w-full flex-col gap-4', className)}>
 	{@render children?.()}
-</caption>
+</div>

@@ -17,13 +17,19 @@
 	import { Button } from '$lib/components/ui/button';
 	import { toast } from 'svelte-sonner';
 	import { invalidateAll } from '$app/navigation';
+	import { Calendar } from '$lib/components/ui/calendar';
+	import * as Popover from '$lib/components/ui/popover';
+	import CalendarIcon from '@lucide/svelte/icons/calendar';
+	import { getLocalTimeZone, type CalendarDate } from '@internationalized/date';
+	import { cn } from '$lib/utils';
 
 	let fullName = $state('');
 	let email = $state('');
 	let phone = $state('');
 	let licenseNumber = $state('');
 	let licenseCategory = $state('');
-	let licenseExpiry = $state('');
+	let licenseExpiry = $state<CalendarDate | undefined>();
+	let popoverOpen = $state(false);
 	let safetyScore = $state<number | null>(100);
 	let status = $state<'AVAILABLE' | 'ON_TRIP' | 'OFF_DUTY' | 'SUSPENDED'>('AVAILABLE');
 	let submitting = $state(false);
@@ -31,6 +37,13 @@
 	async function handleSubmit(e: SubmitEvent) {
 		e.preventDefault();
 		submitting = true;
+
+		if (!licenseExpiry) {
+			toast.error('License expiry date is required');
+			submitting = false;
+			return;
+		}
+
 		try {
 			const res = await fetch('/api/drivers', {
 				method: 'POST',
@@ -43,7 +56,7 @@
 					phone,
 					licenseNumber,
 					licenseCategory,
-					licenseExpiry,
+					licenseExpiry: licenseExpiry ? licenseExpiry.toString() : '',
 					safetyScore,
 					status
 				})
@@ -62,7 +75,7 @@
 			phone = '';
 			licenseNumber = '';
 			licenseCategory = '';
-			licenseExpiry = '';
+			licenseExpiry = undefined;
 			safetyScore = 100;
 			status = 'AVAILABLE';
 
@@ -157,17 +170,37 @@
 					/>
 				</div>
 
-				<div class="space-y-1.5">
+				<div class="space-y-1.5 flex flex-col">
 					<label for="licenseExpiry" class="text-xs font-medium text-muted-foreground"
 						>License Expiry Date *</label
 					>
-					<Input
-						id="licenseExpiry"
-						name="licenseExpiry"
-						type="date"
-						bind:value={licenseExpiry}
-						required
-					/>
+					<Popover.Root bind:open={popoverOpen}>
+						<Popover.Trigger>
+							<Button
+								{...props}
+								variant="outline"
+								class={cn(
+									'w-full justify-start text-start font-normal',
+									!licenseExpiry && 'text-muted-foreground'
+								)}
+							>
+								<CalendarIcon class="mr-2 h-4 w-4" />
+								{licenseExpiry
+									? licenseExpiry.toDate(getLocalTimeZone()).toLocaleDateString()
+									: 'Select date'}
+							</Button>
+						</Popover.Trigger>
+						<Popover.Content class="w-auto p-0">
+							<Calendar
+								bind:value={licenseExpiry}
+								type="single"
+								initialFocus
+								onValueChange={() => {
+									popoverOpen = false;
+								}}
+							/>
+						</Popover.Content>
+					</Popover.Root>
 				</div>
 
 				<div class="space-y-1.5">

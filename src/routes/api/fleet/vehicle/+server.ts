@@ -1,7 +1,7 @@
-import { form, getRequestEvent } from '$app/server';
+import { json } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
 import { db } from '$lib/server/db';
 import { vehicle } from '$lib/server/db/schema';
-import { error } from '@sveltejs/kit';
 import { z } from 'zod';
 
 const AddVehicleSchema = z.object({
@@ -20,18 +20,21 @@ const AddVehicleSchema = z.object({
 	region: z.string().optional()
 });
 
-export const addVehicle = form(AddVehicleSchema, async (parsedData) => {
-	const event = getRequestEvent();
-	if (!event?.locals.user || !event?.locals.employee) {
-		throw error(401, 'Unauthorized');
+export const POST: RequestHandler = async (event) => {
+	const { locals, request } = event;
+	if (!locals.user || !locals.employee) {
+		return json({ error: 'Unauthorized' }, { status: 401 });
 	}
 
-	const role = event.locals.employee.role;
+	const role = locals.employee.role;
 	if (role !== 'ADMIN' && role !== 'FLEET_MANAGER') {
-		throw error(403, 'Forbidden');
+		return json({ error: 'Forbidden' }, { status: 403 });
 	}
 
 	try {
+		const body = await request.json();
+		const parsedData = AddVehicleSchema.parse(body);
+
 		// Insert into DB
 		const [newVehicle] = await db
 			.insert(vehicle)
@@ -47,11 +50,14 @@ export const addVehicle = form(AddVehicleSchema, async (parsedData) => {
 			})
 			.returning();
 
-		return { success: true, vehicle: newVehicle };
+		return json({ success: true, vehicle: newVehicle });
 	} catch (e: any) {
-		if (e.message?.includes('unique') || e.code === '23505') {
-			throw error(400, 'Registration Number must be unique.');
+		if (e instanceof z.ZodError) {
+			return json({ error: e.issues[0]?.message || 'Invalid input data' }, { status: 400 });
 		}
-		throw error(500, e.message || 'Failed to insert vehicle.');
+		if (e.message?.includes('unique') || e.code === '23505') {
+			return json({ error: 'Registration Number must be unique.' }, { status: 400 });
+		}
+		return json({ error: e.message || 'Failed to insert vehicle.' }, { status: 500 });
 	}
-});
+};

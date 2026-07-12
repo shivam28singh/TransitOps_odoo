@@ -15,8 +15,8 @@
 	import * as Select from '$lib/components/ui/select';
 	import { Input } from '$lib/components/ui/input';
 	import { Button } from '$lib/components/ui/button';
-	import { addVehicle } from '../../../../routes/(app)/fleet/data.remote';
 	import { toast } from 'svelte-sonner';
+	import { invalidateAll } from '$app/navigation';
 
 	let regNo = $state('');
 	let name = $state('');
@@ -25,10 +25,32 @@
 	let odometerKm = $state<number | null>(0);
 	let acquisitionCost = $state<number | null>(null);
 	let region = $state('');
+	let submitting = $state(false);
 
-	// Reactive tracking of the remote function execution state
-	$effect(() => {
-		if (addVehicle.result?.success) {
+	async function handleSubmit(e: SubmitEvent) {
+		e.preventDefault();
+		submitting = true;
+		try {
+			const res = await fetch('/api/fleet/vehicle', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					regNo,
+					name,
+					type,
+					capacityKg,
+					odometerKm,
+					acquisitionCost,
+					region: region || undefined
+				})
+			});
+			const resData = await res.json();
+			if (!res.ok) {
+				toast.error(resData.error || 'Failed to add vehicle');
+				return;
+			}
 			toast.success('Vehicle added successfully');
 			open = false;
 
@@ -42,16 +64,15 @@
 			region = '';
 
 			if (onSuccessCallback) {
-				onSuccessCallback(addVehicle.result.vehicle);
+				onSuccessCallback(resData.vehicle);
 			}
+			await invalidateAll();
+		} catch (error: any) {
+			toast.error(error.message || 'An error occurred');
+		} finally {
+			submitting = false;
 		}
-	});
-
-	$effect(() => {
-		if (addVehicle.error) {
-			toast.error(addVehicle.error.message || 'Failed to add vehicle');
-		}
-	});
+	}
 </script>
 
 <Dialog.Root bind:open>
@@ -63,7 +84,7 @@
 			</Dialog.Description>
 		</Dialog.Header>
 
-		<form {...addVehicle} class="space-y-4 py-4">
+		<form onsubmit={handleSubmit} class="space-y-4 py-4">
 			<div class="grid grid-cols-2 gap-4">
 				<div class="space-y-1.5 col-span-2">
 					<label for="regNo" class="text-xs font-medium text-muted-foreground"
@@ -157,8 +178,8 @@
 
 			<Dialog.Footer class="pt-4 border-t border-border mt-4">
 				<Button type="button" variant="outline" onclick={() => (open = false)}>Cancel</Button>
-				<Button type="submit" disabled={addVehicle.submitting}>
-					{addVehicle.submitting ? 'Adding...' : 'Add Vehicle'}
+				<Button type="submit" disabled={submitting}>
+					{submitting ? 'Adding...' : 'Add Vehicle'}
 				</Button>
 			</Dialog.Footer>
 		</form>

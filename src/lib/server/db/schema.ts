@@ -136,4 +136,19 @@ export const tripRelations = relations(trip, ({ one }) => ({
 	})
 }));
 
+export type Task = typeof task.$inferSelect;
+export type NewTask = typeof task.$inferInsert;
+
+export type Employee = typeof employee.$inferSelect;
+export type NewEmployee = typeof employee.$inferInsert;
+
+export type Driver = typeof driver.$inferSelect;
+export type NewDriver = typeof driver.$inferInsert;
+
+export type Vehicle = typeof vehicle.$inferSelect;
+export type NewVehicle = typeof vehicle.$inferInsert;
+
+export type Trip = typeof trip.$inferSelect;
+export type NewTrip = typeof trip.$inferInsert;
+
 export * from './auth.schema';

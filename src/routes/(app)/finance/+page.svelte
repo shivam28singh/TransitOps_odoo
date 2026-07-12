@@ -111,18 +111,10 @@
 	<div class="flex items-center justify-between">
 		<h1 class="text-lg font-semibold tracking-tight">FUEL & EXPENSES</h1>
 		<div class="flex items-center gap-3">
-			<Button
-				variant="outline"
-				class="bg-amber-600/10 text-amber-600 border-amber-600/30 hover:bg-amber-600/20"
-				onclick={() => (isLogFuelOpen = true)}
-			>
+			<Button variant="outline" onclick={() => (isLogFuelOpen = true)}>
 				<Plus class="size-4 mr-1" /> Log Fuel
 			</Button>
-			<Button
-				variant="outline"
-				class="bg-amber-600/10 text-amber-600 border-amber-600/30 hover:bg-amber-600/20"
-				onclick={() => (isAddExpenseOpen = true)}
-			>
+			<Button variant="outline" onclick={() => (isAddExpenseOpen = true)}>
 				<Plus class="size-4 mr-1" /> Add Expense
 			</Button>
 		</div>

@@ -35,6 +35,7 @@ export const actions: Actions = {
 				await db.insert(employee).values({
 					userId: user.id,
 					fullName: user.name,
+					status: 'INACTIVE',
 					role: role as
 						| 'ADMIN'
 						| 'FLEET_MANAGER'

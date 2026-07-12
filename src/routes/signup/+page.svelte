@@ -212,12 +212,12 @@
 								<Select.Trigger
 									class="w-full h-10 text-left bg-transparent border-input focus:ring-2 focus:ring-ring focus:ring-offset-2"
 								>
-									{role || 'Select a role'}
+									{role ? role.split('_').map(w => w[0] + w.slice(1).toLowerCase()).join(' ') : 'Select a role'}
 								</Select.Trigger>
 								<Select.Content>
 									<Select.Group>
 										<Select.GroupHeading>Role</Select.GroupHeading>
-										<Select.Item value="FLEET_MANAGER" label="FLEET MANAGET" />
+										<Select.Item value="FLEET_MANAGER" label="Fleet Manager" />
 										<Select.Item value="DISPATCHER" label="Dispatcher" />
 										<Select.Item value="SAFETY_OFFICER" label="Safety Officer" />
 										<Select.Item value="FINANCIAL_ANALYST" label="Financial Analyst" />

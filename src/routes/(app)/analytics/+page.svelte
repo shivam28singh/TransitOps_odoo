@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { Download, Search } from 'lucide-svelte';
+	import { Download, Search } from '@lucide/svelte';
 	import { Input } from '$lib/components/ui/input';
 	import { Button } from '$lib/components/ui/button';
-	import { page } from '$app/state';
 
 	let { data } = $props();
 
@@ -31,8 +30,8 @@
 	]);
 
 	// Extract maximums for charting scales
-	let maxRevenue = $derived(Math.max(...data.monthlyRevenue.map((d: any) => d.revenue), 1));
-	let maxCost = $derived(Math.max(...data.topCostliestVehicles.map((v: any) => v.cost), 1));
+	let maxRevenue = $derived(Math.max(...data.monthlyRevenue.map((d) => d.revenue), 1));
+	let maxCost = $derived(Math.max(...data.topCostliestVehicles.map((v) => v.cost), 1));
 
 	// Use colors from the mockup for the horizontal bars
 	const vehicleColors = ['bg-red-400', 'bg-orange-500', 'bg-blue-400'];
@@ -64,15 +63,17 @@
 
 	<!-- KPIs Grid -->
 	<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-		{#each kpis as kpi}
+		{#each kpis as kpi, idx (idx)}
 			<div
-				class="bg-[#111111] border border-slate-800 rounded-md p-5 flex flex-col justify-between border-l-[3px] {kpi.color} shadow-lg shadow-black/50 hover:shadow-black/70 transition-shadow"
+				class="bg-card border border-border rounded-md p-5 flex flex-col justify-between border-l-[3px] {kpi.color} shadow-sm hover:shadow-md transition-shadow"
 			>
-				<h3 class="text-[10px] font-bold text-slate-400 tracking-wider mb-2 font-mono uppercase">
+				<h3
+					class="text-[10px] font-bold text-muted-foreground tracking-wider mb-2 font-mono uppercase"
+				>
 					{kpi.title}
 				</h3>
 				<p
-					class="text-3xl font-light text-slate-100 tracking-tight"
+					class="text-3xl font-light text-foreground tracking-tight"
 					style="font-family: 'Inter', sans-serif;"
 				>
 					{kpi.value}
@@ -96,7 +97,7 @@
 			<div
 				class="h-48 flex items-end justify-between gap-1 sm:gap-2 border-b border-slate-800 pb-2"
 			>
-				{#each data.monthlyRevenue as point}
+				{#each data.monthlyRevenue as point, idx (idx)}
 					<div class="flex flex-col items-center justify-end h-full w-full group relative">
 						<!-- Tooltip -->
 						<div
@@ -116,7 +117,7 @@
 
 			<!-- X-Axis Labels -->
 			<div class="flex justify-between px-1">
-				{#each data.monthlyRevenue as point}
+				{#each data.monthlyRevenue as point, idx (idx)}
 					<span
 						class="text-[10px] text-slate-500 font-mono w-full text-center hidden sm:block truncate"
 					>
@@ -133,7 +134,7 @@
 			</h3>
 
 			<div class="space-y-5 pt-2">
-				{#each data.topCostliestVehicles as vehicle, i}
+				{#each data.topCostliestVehicles as vehicle, i (i)}
 					<div class="flex items-center gap-4">
 						<span class="w-20 text-xs text-slate-400 font-mono truncate uppercase">
 							{vehicle.name}

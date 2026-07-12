@@ -158,11 +158,14 @@
 								: 'Select a vehicle...'}
 						</Select.Trigger>
 						<Select.Content>
-							{#each data.availableVehicles as vehicle, idx (idx)}
-								<Select.Item value={vehicle.id.toString()} label={vehicle.name}>
-									{vehicle.name} - {vehicle.capacityKg} kg capacity
-								</Select.Item>
-							{/each}
+							<Select.Group>
+								<Select.GroupHeading>Vehicles</Select.GroupHeading>
+								{#each data.availableVehicles as vehicle, idx (idx)}
+									<Select.Item value={vehicle.id.toString()} label={vehicle.name}>
+										{vehicle.name} - {vehicle.capacityKg} kg capacity
+									</Select.Item>
+								{/each}
+							</Select.Group>
 						</Select.Content>
 					</Select.Root>
 				</div>

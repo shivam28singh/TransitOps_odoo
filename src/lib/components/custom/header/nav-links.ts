@@ -1,15 +1,15 @@
 const navLinks = [
 	{
 		label: 'Features',
-		href: '/'
+		href: '#features'
 	},
 	{
-		label: 'Pricing',
-		href: '/'
+		label: 'Testimonials',
+		href: '#testimonials'
 	},
 	{
-		label: 'About',
-		href: '/'
+		label: 'FAQs',
+		href: '#faqs'
 	}
 ];
 

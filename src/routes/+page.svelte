@@ -2,20 +2,62 @@
 	import { resolve } from '$app/paths';
 	import Header from '$lib/components/custom/header/header.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import {
-		ArrowRight,
-		Rocket,
-		Gauge,
-		Activity,
-		ShieldCheck,
-		Zap,
-		LineChart,
-		ChartLine
-	} from '@lucide/svelte';
+	import { ArrowRight, Rocket, Gauge, Activity, ShieldCheck, Zap, ChartLine } from '@lucide/svelte';
 	import { cn } from '$lib/utils';
 	import type { Component } from 'svelte';
 	import TestimonialThree from '$lib/components/efferd/testimonial/testimonial-three.svelte';
+	import {
+		Accordion,
+		AccordionContent,
+		AccordionItem,
+		AccordionTrigger
+	} from '$lib/components/ui/accordion';
 	const { data } = $props();
+
+	type Question = {
+		id: string;
+		title: string;
+		content: string;
+	};
+
+	const questions: Question[] = [
+		{
+			id: 'item-1',
+			title: 'What is TransitOps?',
+			content:
+				'TransitOps is a comprehensive fleet and transit management system designed to streamline your daily operations, from dispatching to vehicle maintenance.'
+		},
+		{
+			id: 'item-2',
+			title: 'Who can benefit from TransitOps?',
+			content:
+				'TransitOps is built for fleet managers, dispatchers, and transportation companies looking to digitize their workflows, reduce costs, and improve operational efficiency.'
+		},
+		{
+			id: 'item-3',
+			title: 'Does it support real-time vehicle tracking?',
+			content:
+				'Yes, TransitOps provides live tracking of your fleet, allowing dispatchers to make informed decisions and optimize routes dynamically.'
+		},
+		{
+			id: 'item-4',
+			title: 'Can I track fuel and maintenance expenses?',
+			content:
+				'Absolutely. Our unified financial dashboard automatically calculates total operational costs per vehicle, linking fuel logs and maintenance records seamlessly.'
+		},
+		{
+			id: 'item-5',
+			title: 'Is there role-based access control?',
+			content:
+				'Yes. TransitOps features granular RBAC (Role-Based Access Control) to ensure that Fleet Managers, Dispatchers, and Safety Officers only access the data and tools they need.'
+		},
+		{
+			id: 'item-6',
+			title: 'How do I get started?',
+			content:
+				'You can book a demo with our team or dive straight into the dashboard to start setting up your depots, vehicles, and driver profiles today.'
+		}
+	];
 
 	type Feature = {
 		title: string;
@@ -117,9 +159,7 @@
 	</div>
 </section>
 
-<div
-	class="mx-auto grid max-w-5xl grid-cols-2 gap-4 py-16 px-4 md:grid-cols-4 animate-in fade-in slide-in-from-bottom-10 duration-700 delay-500 fill-mode-backwards"
->
+<div id="features" class="mx-auto grid max-w-5xl grid-cols-2 gap-4 py-16 px-4 md:grid-cols-4 animate-in fade-in slide-in-from-bottom-10 duration-700 delay-500 fill-mode-backwards">
 	{#each features as feature, index (feature.title)}
 		{@const FeatureIcon = feature.icon}
 		<div
@@ -144,6 +184,70 @@
 	{/each}
 </div>
 
-<div>
-	<TestimonialThree />
+<div id="testimonials" class="w-full flex flex-col items-center justify-center py-20 px-4 relative overflow-hidden animate-in fade-in slide-in-from-bottom-10 duration-700 delay-[600ms] fill-mode-backwards">
+	<div class="text-center mb-16 max-w-3xl mx-auto space-y-4">
+		<h2 class="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl text-foreground">
+			Trusted by Industry Leaders
+		</h2>
+		<p class="text-muted-foreground text-base sm:text-lg">
+			See what top operators are saying about TransitOps and how it transforms their fleet
+			management.
+		</p>
+	</div>
+	<div class="w-full">
+		<TestimonialThree />
+	</div>
 </div>
+
+<div id="faqs" class="mx-auto w-full max-w-3xl space-y-7 px-4 py-24 animate-in fade-in slide-in-from-bottom-10 duration-700 delay-[600ms] fill-mode-backwards">
+	<div class="space-y-4 text-center mb-10">
+		<h2 class="text-3xl font-bold tracking-tight md:text-4xl text-foreground">
+			Frequently Asked Questions
+		</h2>
+		<p class="max-w-2xl mx-auto text-muted-foreground sm:text-lg">
+			Here are some common questions and answers that you might encounter when using TransitOps. If
+			you don't find the answer you're looking for, feel free to reach out.
+		</p>
+	</div>
+
+	<Accordion type="single" class="rounded-lg border border-border/50">
+		{#each questions as item (item.id)}
+			<AccordionItem value={item.id} class="px-6 border-border/50">
+				<AccordionTrigger
+					class="py-5 hover:no-underline font-medium text-left focus-visible:underline focus-visible:ring-0"
+				>
+					{item.title}
+				</AccordionTrigger>
+				<AccordionContent class="text-muted-foreground pb-5 leading-relaxed">
+					{item.content}
+				</AccordionContent>
+			</AccordionItem>
+		{/each}
+	</Accordion>
+
+	<p class="text-muted-foreground text-center pt-8">
+		Can't find what you're looking for? Contact our
+		<a class="text-primary font-medium hover:underline" href="mailto:support@transitops.com">
+			customer support team
+		</a>
+	</p>
+</div>
+
+<!-- Footer -->
+<footer class="border-t border-border mt-12 bg-card/50">
+	<div
+		class="mx-auto max-w-5xl px-4 py-8 flex flex-col md:flex-row items-center justify-between gap-4"
+	>
+		<p class="text-sm text-muted-foreground">
+			&copy; {new Date().getFullYear()} TransitOps. All rights reserved.
+		</p>
+		<div class="flex items-center gap-6 text-sm text-muted-foreground">
+			<a href={resolve('/terms')} class="hover:text-foreground transition-colors"
+				>Terms of Service</a
+			>
+			<a href={resolve('/privacy')} class="hover:text-foreground transition-colors"
+				>Privacy Policy</a
+			>
+		</div>
+	</div>
+</footer>

@@ -11,7 +11,7 @@
 	let testimonials: Testimonial[] = [
 		{
 			quote:
-				"We just acquired Efferd for 3 gazillion dollars. We're calling it iEfferd. It's our best product yet.",
+				'TransitOps has completely revolutionized our logistics. The seamless dispatching and real-time tracking is unparalleled.',
 			image:
 				'https://imageio.forbes.com/specials-images/imageserve/6619bd484f5aec5d9536ce3b/0x0.jpg?format=jpg&crop=996,995,x1811,y45,safe&height=416&width=416&fit=bounds',
 			name: 'Fabien Pinckaers',
@@ -20,7 +20,7 @@
 		},
 		{
 			quote:
-				"I'm considering shipping Efferd components with Prime delivery. 2-day shipping on beautiful UIs? Done.",
+				"We're considering running our entire Prime delivery fleet on TransitOps. Flawless logistics at a global scale? Done.",
 			image: 'https://unavatar.io/x/JeffBezos',
 			name: 'Jeff Bezos',
 			role: 'Founder',
@@ -28,7 +28,7 @@
 		},
 		{
 			quote:
-				"We're rewriting OpenAI's entire frontend in Efferd. The AGI told us it's the only logical choice.",
+				'The routing efficiency in TransitOps is so advanced, I almost thought it was powered by AGI. A must-have for modern fleets.',
 			image: 'https://unavatar.io/x/sama',
 			name: 'Sam Altman',
 			role: 'CEO',

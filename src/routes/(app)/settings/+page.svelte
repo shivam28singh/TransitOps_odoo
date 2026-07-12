@@ -124,31 +124,31 @@
 						<td class="px-4 py-5 text-foreground font-medium">Fleet Manager</td>
 						<td class="px-4 py-5 text-center"><Check class="size-4 mx-auto text-foreground" /></td>
 						<td class="px-4 py-5 text-center"><Check class="size-4 mx-auto text-foreground" /></td>
-						<td class="px-4 py-5 text-center">–</td>
-						<td class="px-4 py-5 text-center">–</td>
+						<td class="px-4 py-5 text-center">-</td>
+						<td class="px-4 py-5 text-center">-</td>
 						<td class="px-4 py-5 text-center"><Check class="size-4 mx-auto text-foreground" /></td>
 					</tr>
 					<tr class="hover:bg-muted/20 transition-colors">
 						<td class="px-4 py-5 text-foreground font-medium">Dispatcher</td>
 						<td class="px-4 py-5 text-center italic font-serif text-sm">view</td>
-						<td class="px-4 py-5 text-center">–</td>
+						<td class="px-4 py-5 text-center">-</td>
 						<td class="px-4 py-5 text-center"><Check class="size-4 mx-auto text-foreground" /></td>
-						<td class="px-4 py-5 text-center">–</td>
-						<td class="px-4 py-5 text-center">–</td>
+						<td class="px-4 py-5 text-center">-</td>
+						<td class="px-4 py-5 text-center">-</td>
 					</tr>
 					<tr class="hover:bg-muted/20 transition-colors">
 						<td class="px-4 py-5 text-foreground font-medium">Safety Officer</td>
-						<td class="px-4 py-5 text-center">–</td>
+						<td class="px-4 py-5 text-center">-</td>
 						<td class="px-4 py-5 text-center"><Check class="size-4 mx-auto text-foreground" /></td>
 						<td class="px-4 py-5 text-center italic font-serif text-sm">view</td>
-						<td class="px-4 py-5 text-center">–</td>
-						<td class="px-4 py-5 text-center">–</td>
+						<td class="px-4 py-5 text-center">-</td>
+						<td class="px-4 py-5 text-center">-</td>
 					</tr>
 					<tr class="hover:bg-muted/20 transition-colors">
 						<td class="px-4 py-5 text-foreground font-medium">Financial Analyst</td>
 						<td class="px-4 py-5 text-center italic font-serif text-sm">view</td>
-						<td class="px-4 py-5 text-center">–</td>
-						<td class="px-4 py-5 text-center">–</td>
+						<td class="px-4 py-5 text-center">-</td>
+						<td class="px-4 py-5 text-center">-</td>
 						<td class="px-4 py-5 text-center"><Check class="size-4 mx-auto text-foreground" /></td>
 						<td class="px-4 py-5 text-center"><Check class="size-4 mx-auto text-foreground" /></td>
 					</tr>

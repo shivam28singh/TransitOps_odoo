@@ -1,4 +1,3 @@
-import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { db } from '$lib/server/db';
 import { trip, fuelLog, maintenance, vehicle } from '$lib/server/db/schema';

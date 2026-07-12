@@ -1,5 +1,8 @@
 # TransitOps Odoo
 
+## Admin User Credentials
+-**username**: admin@admin.com
+-**password**: admin@1234
 A modern, full-stack web application built with SvelteKit, designed for transit operations
 
 ## 🚀 Tech Stack

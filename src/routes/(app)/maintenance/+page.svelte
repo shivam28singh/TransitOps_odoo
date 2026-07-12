@@ -234,9 +234,15 @@
 								</td>
 								<td class="px-4 py-3 text-center">
 									{#if log.status === 'ACTIVE'}
-										<Badge variant="outline" class="border-orange-500 text-orange-500 bg-orange-500/10">In Shop</Badge>
+										<Badge
+											variant="outline"
+											class="border-orange-500 text-orange-500 bg-orange-500/10">In Shop</Badge
+										>
 									{:else}
-										<Badge variant="outline" class="border-emerald-500 text-emerald-500 bg-emerald-500/10">Completed</Badge>
+										<Badge
+											variant="outline"
+											class="border-emerald-500 text-emerald-500 bg-emerald-500/10">Completed</Badge
+										>
 									{/if}
 								</td>
 							</tr>

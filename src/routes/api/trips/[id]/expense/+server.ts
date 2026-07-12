@@ -18,7 +18,12 @@ export const PATCH: RequestHandler = async (event) => {
 
 	const role = locals.employee.role;
 	// Only certain roles can add expenses
-	if (role !== 'ADMIN' && role !== 'FLEET_MANAGER' && role !== 'DISPATCHER' && role !== 'FINANCIAL_ANALYST') {
+	if (
+		role !== 'ADMIN' &&
+		role !== 'FLEET_MANAGER' &&
+		role !== 'DISPATCHER' &&
+		role !== 'FINANCIAL_ANALYST'
+	) {
 		return json({ error: 'Forbidden' }, { status: 403 });
 	}
 

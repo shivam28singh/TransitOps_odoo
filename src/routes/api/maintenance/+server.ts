@@ -52,7 +52,10 @@ export const POST: RequestHandler = async (event) => {
 
 			// If active, update vehicle status to IN_SHOP
 			if (parsedData.status === 'ACTIVE') {
-				await tx.update(vehicle).set({ status: 'IN_SHOP' }).where(eq(vehicle.id, parsedData.vehicleId));
+				await tx
+					.update(vehicle)
+					.set({ status: 'IN_SHOP' })
+					.where(eq(vehicle.id, parsedData.vehicleId));
 			}
 
 			return newRecord;

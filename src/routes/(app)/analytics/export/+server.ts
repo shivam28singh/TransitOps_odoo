@@ -12,15 +12,17 @@ export const GET: RequestHandler = async ({ locals }) => {
 	try {
 		// Calculate overall Fuel Efficiency
 		const [distanceResult] = await db.select({ total: sum(trip.distanceKm) }).from(trip);
-		const [fuelResult] = await db.select({ 
-			totalLiters: sum(fuelLog.liters),
-			totalCost: sum(fuelLog.cost)
-		}).from(fuelLog);
+		const [fuelResult] = await db
+			.select({
+				totalLiters: sum(fuelLog.liters),
+				totalCost: sum(fuelLog.cost)
+			})
+			.from(fuelLog);
 
 		const totalDistance = Number(distanceResult?.total || 0);
 		const totalLiters = Number(fuelResult?.totalLiters || 0);
 		const totalFuelCost = Number(fuelResult?.totalCost || 0);
-		
+
 		const fuelEfficiency = totalLiters > 0 ? (totalDistance / totalLiters).toFixed(1) : '0.0';
 
 		// Calculate Fleet Utilization
@@ -31,21 +33,24 @@ export const GET: RequestHandler = async ({ locals }) => {
 			.select({ count: countDistinct(trip.vehicleId) })
 			.from(trip)
 			.where(gte(trip.createdAt, thirtyDaysAgo));
-		
+
 		const [totalVehiclesResult] = await db.select({ count: sql<number>`count(*)` }).from(vehicle);
-		
+
 		const activeVehicles = Number(activeVehiclesResult?.count || 0);
 		const totalVehicles = Number(totalVehiclesResult?.count || 0);
-		
-		const fleetUtilization = totalVehicles > 0 ? Math.round((activeVehicles / totalVehicles) * 100) : 0;
+
+		const fleetUtilization =
+			totalVehicles > 0 ? Math.round((activeVehicles / totalVehicles) * 100) : 0;
 
 		// Calculate Operational Cost
 		const [maintenanceResult] = await db.select({ total: sum(maintenance.cost) }).from(maintenance);
-		const [tripCostsResult] = await db.select({ 
-			totalToll: sum(trip.tollCost),
-			totalOther: sum(trip.otherCost),
-			totalRevenue: sum(trip.revenue)
-		}).from(trip);
+		const [tripCostsResult] = await db
+			.select({
+				totalToll: sum(trip.tollCost),
+				totalOther: sum(trip.otherCost),
+				totalRevenue: sum(trip.revenue)
+			})
+			.from(trip);
 
 		const totalMaintenance = Number(maintenanceResult?.total || 0);
 		const totalToll = Number(tripCostsResult?.totalToll || 0);
@@ -55,12 +60,18 @@ export const GET: RequestHandler = async ({ locals }) => {
 		const operationalCost = totalMaintenance + totalFuelCost + totalToll + totalOther;
 
 		// Calculate Vehicle ROI
-		const [acquisitionCostResult] = await db.select({ total: sum(vehicle.acquisitionCost) }).from(vehicle);
+		const [acquisitionCostResult] = await db
+			.select({ total: sum(vehicle.acquisitionCost) })
+			.from(vehicle);
 		const totalAcquisitionCost = Number(acquisitionCostResult?.total || 0);
 
-		const vehicleRoi = totalAcquisitionCost > 0 
-			? (((totalRevenue - (totalMaintenance + totalFuelCost)) / totalAcquisitionCost) * 100).toFixed(1)
-			: '0.0';
+		const vehicleRoi =
+			totalAcquisitionCost > 0
+				? (
+						((totalRevenue - (totalMaintenance + totalFuelCost)) / totalAcquisitionCost) *
+						100
+					).toFixed(1)
+				: '0.0';
 
 		// Costliest Vehicles
 		const costliestVehiclesResult = await db.execute(sql`
@@ -81,7 +92,7 @@ export const GET: RequestHandler = async ({ locals }) => {
 
 		// Build CSV content
 		let csvContent = 'TransitOps Analytics Report\n\n';
-		
+
 		// Section 1: KPIs
 		csvContent += 'Key Performance Indicators\n';
 		csvContent += 'Metric,Value\n';

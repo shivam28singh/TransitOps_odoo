@@ -76,7 +76,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 	return {
 		fuelLogs,
-		trips: tripsList.map(t => ({
+		trips: tripsList.map((t) => ({
 			...t,
 			maintLinked: maintCostMap[t.vehicleId] || 0
 		})),

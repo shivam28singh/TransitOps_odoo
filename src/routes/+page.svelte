@@ -2,8 +2,49 @@
 	import { resolve } from '$app/paths';
 	import Header from '$lib/components/custom/header/header.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { ArrowRight, Rocket, Gauge } from '@lucide/svelte';
+	import {
+		ArrowRight,
+		Rocket,
+		Gauge,
+		Activity,
+		ShieldCheck,
+		Zap,
+		LineChart,
+		ChartLine
+	} from '@lucide/svelte';
+	import { cn } from '$lib/utils';
+	import type { Component } from 'svelte';
+	import TestimonialThree from '$lib/components/efferd/testimonial/testimonial-three.svelte';
 	const { data } = $props();
+
+	type Feature = {
+		title: string;
+		icon: Component;
+		description: string;
+	};
+
+	const features: Feature[] = [
+		{
+			title: 'Optimized Dispatch',
+			icon: Zap,
+			description: 'Intelligent routing and swift vehicle dispatching.'
+		},
+		{
+			title: 'Secure Operations',
+			icon: ShieldCheck,
+			description: 'Role-based access and secure data handling.'
+		},
+		{
+			title: 'Live Tracking',
+			icon: Activity,
+			description: 'Real-time sync across your entire fleet.'
+		},
+		{
+			title: 'Rich Analytics',
+			icon: ChartLine,
+			description: 'Data-driven insights for operational efficiency.'
+		}
+	];
 </script>
 
 <Header user={data.user} />
@@ -75,3 +116,34 @@
 		</div>
 	</div>
 </section>
+
+<div
+	class="mx-auto grid max-w-5xl grid-cols-2 gap-4 py-16 px-4 md:grid-cols-4 animate-in fade-in slide-in-from-bottom-10 duration-700 delay-500 fill-mode-backwards"
+>
+	{#each features as feature, index (feature.title)}
+		{@const FeatureIcon = feature.icon}
+		<div
+			class={cn(
+				'relative flex flex-col items-center justify-center p-4',
+				'after:absolute after:inset-y-0 after:right-0 after:h-full after:w-px after:bg-linear-to-b after:from-foreground/5 after:via-foreground/20 after:to-foreground/5',
+				'[&_svg]:size-8 [&_svg]:text-muted-foreground',
+				{
+					'after:hidden': index === features.length - 1,
+					'after:hidden after:md:block': index === 1
+				}
+			)}
+		>
+			<FeatureIcon />
+			<h3 class="mt-6 text-center text-sm font-semibold md:text-base lg:text-lg">
+				{feature.title}
+			</h3>
+			<p class="mt-2 text-center text-xs text-muted-foreground md:text-sm">
+				{feature.description}
+			</p>
+		</div>
+	{/each}
+</div>
+
+<div>
+	<TestimonialThree />
+</div>

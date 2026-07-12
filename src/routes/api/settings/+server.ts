@@ -20,7 +20,10 @@ export const POST: RequestHandler = async (event) => {
 	const role = locals.employee.role;
 	// Only ADMIN can modify settings
 	if (role !== 'ADMIN') {
-		return json({ error: 'Forbidden. Only administrators can update system settings.' }, { status: 403 });
+		return json(
+			{ error: 'Forbidden. Only administrators can update system settings.' },
+			{ status: 403 }
+		);
 	}
 
 	try {

@@ -52,7 +52,7 @@
 					</DropdownMenu.Trigger>
 					<DropdownMenu.Content align="end">
 						<DropdownMenu.Label>{user.name || 'User'}</DropdownMenu.Label>
-						<a href={resolve('/admin')} class="nodefault">
+						<a href={resolve('/dashboard')} class="nodefault">
 							<DropdownMenu.Item>Get Started</DropdownMenu.Item>
 						</a>
 						<a href={resolve('/signout')} class="nodefault">

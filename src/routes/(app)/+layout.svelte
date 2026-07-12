@@ -78,10 +78,10 @@
 					>Menu</Sidebar.GroupLabel
 				>
 				<Sidebar.GroupContent class="mt-2">
-					<Sidebar.SidebarMenu class="my-1!">
+					<Sidebar.SidebarMenu>
 						{#each links as link, idx (idx)}
 							{@const Icon = link.icon}
-							<Sidebar.SidebarMenuItem>
+							<Sidebar.SidebarMenuItem class="my-0.5">
 								<Sidebar.SidebarMenuButton
 									onclick={() => goto(resolve(link.href))}
 									isActive={page.url.pathname.startsWith(link.href)}

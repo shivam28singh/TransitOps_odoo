@@ -177,7 +177,6 @@
 					<Popover.Root bind:open={popoverOpen}>
 						<Popover.Trigger>
 							<Button
-								{...props}
 								variant="outline"
 								class={cn(
 									'w-full justify-start text-start font-normal',

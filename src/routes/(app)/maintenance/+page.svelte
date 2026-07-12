@@ -7,7 +7,7 @@
 	import { Calendar } from '$lib/components/ui/calendar';
 	import * as Popover from '$lib/components/ui/popover';
 	import CalendarIcon from '@lucide/svelte/icons/calendar';
-	import { ArrowRight, Wrench } from '@lucide/svelte';
+	import { ArrowRight, Wrench, CircleCheck } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 	import { invalidateAll } from '$app/navigation';
 	import { getLocalTimeZone, type CalendarDate } from '@internationalized/date';
@@ -22,6 +22,27 @@
 	let popoverOpen = $state(false);
 	let status = $state<'ACTIVE' | 'COMPLETED'>('ACTIVE');
 	let submitting = $state(false);
+	let updatingStatus = $state(false);
+
+	async function handleCompleteMaintenance(id: number) {
+		updatingStatus = true;
+		try {
+			const res = await fetch(`/api/maintenance/${id}`, {
+				method: 'PUT'
+			});
+			if (res.ok) {
+				toast.success('Maintenance completed and vehicle available.');
+				await invalidateAll();
+			} else {
+				const result = await res.json();
+				toast.error(result.error || 'Failed to complete maintenance.');
+			}
+		} catch (err) {
+			toast.error('An error occurred.');
+		} finally {
+			updatingStatus = false;
+		}
+	}
 
 	async function handleSubmit() {
 		if (!vehicleId || !serviceType || !cost || !date) {
@@ -234,10 +255,21 @@
 								</td>
 								<td class="px-4 py-3 text-center">
 									{#if log.status === 'ACTIVE'}
-										<Badge
-											variant="outline"
-											class="border-orange-500 text-orange-500 bg-orange-500/10">In Shop</Badge
-										>
+										<div class="flex items-center justify-center gap-2">
+											<Badge
+												variant="outline"
+												class="border-orange-500 text-orange-500 bg-orange-500/10">In Shop</Badge
+											>
+											<Button
+												variant="outline"
+												size="sm"
+												class="h-6 text-[10px] px-2 py-0 border-emerald-500/50 hover:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+												onclick={() => handleCompleteMaintenance(log.id)}
+												disabled={updatingStatus}
+											>
+												<CircleCheck /> Close
+											</Button>
+										</div>
 									{:else}
 										<Badge
 											variant="outline"

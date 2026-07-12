@@ -1,9 +1,10 @@
 <script lang="ts">
 	import * as Select from '$lib/components/ui/select';
+	import * as Dialog from '$lib/components/ui/dialog';
 	import { Input } from '$lib/components/ui/input';
 	import { Button } from '$lib/components/ui/button';
 	import { Badge } from '$lib/components/ui/badge';
-	import { XCircle, MapPin } from '@lucide/svelte';
+	import { XCircle, MapPin, CheckCircle, Ban } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 	import { invalidateAll } from '$app/navigation';
 
@@ -16,6 +17,14 @@
 	let cargoWeight = $state('');
 	let distance = $state('');
 	let submitting = $state(false);
+
+	// Complete Dialog state
+	let completeDialogOpen = $state(false);
+	let completingTripId = $state<number | null>(null);
+	let finalOdometer = $state('');
+	let fuelLiters = $state('');
+	let fuelCost = $state('');
+	let updatingStatus = $state(false);
 
 	let selectedVehicle = $derived(
 		vehicleId ? data.availableVehicles.find((v) => v.id.toString() === vehicleId) : null
@@ -75,6 +84,66 @@
 			toast.error('An error occurred.');
 		} finally {
 			submitting = false;
+		}
+	}
+
+	async function handleCancelTrip(id: number) {
+		if (!confirm('Are you sure you want to cancel this trip?')) return;
+		updatingStatus = true;
+		try {
+			const res = await fetch(`/api/trips/${id}`, {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ status: 'CANCELLED' })
+			});
+			if (res.ok) {
+				toast.success('Trip cancelled and assets released.');
+				await invalidateAll();
+			} else {
+				const result = await res.json();
+				toast.error(result.error || 'Failed to cancel trip.');
+			}
+		} catch (err) {
+			toast.error('An error occurred.');
+		} finally {
+			updatingStatus = false;
+		}
+	}
+
+	function openCompleteDialog(id: number) {
+		completingTripId = id;
+		finalOdometer = '';
+		fuelLiters = '';
+		fuelCost = '';
+		completeDialogOpen = true;
+	}
+
+	async function submitCompleteTrip() {
+		if (!completingTripId) return;
+		updatingStatus = true;
+		try {
+			const res = await fetch(`/api/trips/${completingTripId}`, {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					status: 'COMPLETED',
+					odometerKm: finalOdometer ? Number(finalOdometer) : undefined,
+					fuelLiters: fuelLiters ? Number(fuelLiters) : undefined,
+					fuelCost: fuelCost ? Number(fuelCost) : undefined
+				})
+			});
+			if (res.ok) {
+				toast.success('Trip completed and assets released.');
+				completeDialogOpen = false;
+				await invalidateAll();
+			} else {
+				const result = await res.json();
+				toast.error(result.error || 'Failed to complete trip.');
+			}
+		} catch (err) {
+			toast.error('An error occurred.');
+		} finally {
+			updatingStatus = false;
 		}
 	}
 </script>
@@ -295,11 +364,18 @@
 								<Badge variant="destructive">Cancelled</Badge>
 							{/if}
 
-							<div class="text-sm text-muted-foreground">
+							<div class="text-sm text-muted-foreground flex items-center gap-2">
 								{#if trip.status === 'DRAFT'}
 									Awaiting dispatch
 								{:else if trip.status === 'DISPATCHED'}
-									In transit
+									<div class="flex gap-2">
+										<Button variant="outline" size="sm" class="h-7 text-xs border-emerald-500/50 hover:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" onclick={() => openCompleteDialog(trip.id)} disabled={updatingStatus}>
+											<CheckCircle class="size-3 mr-1"/> Complete
+										</Button>
+										<Button variant="outline" size="sm" class="h-7 text-xs text-destructive hover:bg-destructive/10 border-destructive/50" onclick={() => handleCancelTrip(trip.id)} disabled={updatingStatus}>
+											<Ban class="size-3 mr-1"/> Cancel
+										</Button>
+									</div>
 								{:else if trip.status === 'CANCELLED'}
 									Cancelled
 								{:else}
@@ -311,9 +387,36 @@
 				{/each}
 			</div>
 		{/if}
-
-		<div class="mt-auto pt-6 text-xs text-muted-foreground italic opacity-60">
-			On Complete: odometer -> fuel log -> expenses -> Vehicle & Driver Available
-		</div>
 	</div>
 </div>
+
+<Dialog.Root bind:open={completeDialogOpen}>
+	<Dialog.Content class="sm:max-w-[425px]">
+		<Dialog.Header>
+			<Dialog.Title>Complete Trip</Dialog.Title>
+			<Dialog.Description>
+				Enter the final details for this trip. The vehicle and driver will be released.
+			</Dialog.Description>
+		</Dialog.Header>
+		<div class="grid gap-4 py-4">
+			<div class="grid gap-2">
+				<label for="odometer" class="text-sm font-medium">Final Odometer (km)</label>
+				<Input id="odometer" type="number" bind:value={finalOdometer} placeholder="e.g. 15400" />
+			</div>
+			<div class="grid grid-cols-2 gap-4">
+				<div class="grid gap-2">
+					<label for="fuelLiters" class="text-sm font-medium">Fuel Consumed (L)</label>
+					<Input id="fuelLiters" type="number" bind:value={fuelLiters} placeholder="e.g. 50" />
+				</div>
+				<div class="grid gap-2">
+					<label for="fuelCost" class="text-sm font-medium">Fuel Cost (Rs)</label>
+					<Input id="fuelCost" type="number" bind:value={fuelCost} placeholder="e.g. 4500" />
+				</div>
+			</div>
+		</div>
+		<Dialog.Footer>
+			<Button variant="outline" onclick={() => completeDialogOpen = false}>Cancel</Button>
+			<Button onclick={submitCompleteTrip} disabled={updatingStatus}>Complete Trip</Button>
+		</Dialog.Footer>
+	</Dialog.Content>
+</Dialog.Root>

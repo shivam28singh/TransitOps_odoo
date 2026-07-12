@@ -49,6 +49,9 @@ export const POST: RequestHandler = async (event) => {
 			if (!selectedDriver || selectedDriver.status !== 'AVAILABLE') {
 				throw new Error('Selected driver is not available.');
 			}
+			if (selectedDriver.licenseExpiry && new Date(selectedDriver.licenseExpiry) < new Date()) {
+				throw new Error('Driver license is expired.');
+			}
 
 			// Create Trip
 			const [newTrip] = await tx

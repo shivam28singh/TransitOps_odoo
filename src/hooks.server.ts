@@ -23,10 +23,11 @@ const handleBetterAuth: Handle = async ({ event, resolve }) => {
 
 	const path = event.url.pathname;
 
-	let requiredModule: 'fleet' | 'driver' | 'trip' | 'fuel_exp' | 'analytics' | 'admin' | null =
+	let requiredModule: 'fleet' | 'driver' | 'trip' | 'fuel_exp' | 'analytics' | 'admin' | 'settings' | null =
 		null;
 
-	if (path.startsWith('/settings') || path.startsWith('/api/settings')) requiredModule = 'admin';
+	if (path.startsWith('/admin')) requiredModule = 'admin';
+	else if (path.startsWith('/settings') || path.startsWith('/api/settings')) requiredModule = 'settings';
 	else if (
 		path.startsWith('/fleet') ||
 		path.startsWith('/api/fleet') ||
@@ -59,6 +60,12 @@ const handleBetterAuth: Handle = async ({ event, resolve }) => {
 			const isModify = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(event.request.method);
 
 			const rbacMatrix: Record<string, Record<string, 'modify' | 'view' | 'none'>> = {
+				settings: {
+					FLEET_MANAGER: 'view',
+					DISPATCHER: 'view',
+					SAFETY_OFFICER: 'view',
+					FINANCIAL_ANALYST: 'view'
+				},
 				fleet: {
 					FLEET_MANAGER: 'modify',
 					DISPATCHER: 'view',

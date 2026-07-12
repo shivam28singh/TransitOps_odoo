@@ -169,7 +169,7 @@ html {
 	}
 
 	a:not(.nodefault) {
-		@apply font-medium text-primary hover:underline hover:underline-offset-4;
+		@apply font-medium text-primary;
 	}
 
 	.lead {

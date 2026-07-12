@@ -30,7 +30,7 @@ export const POST: RequestHandler = async (event) => {
 		const body = await request.json();
 		const parsedData = CreateTripSchema.parse(body);
 
-		const result = async () => {
+		const result = await (async () => {
 			// Check vehicle
 			const selectedVehicle = await db.query.vehicle.findFirst({
 				where: eq(vehicle.id, parsedData.vehicleId)
@@ -80,7 +80,7 @@ export const POST: RequestHandler = async (event) => {
 			}
 
 			return newTrip;
-		};
+		})();
 
 		return json({ success: true, trip: result });
 	} catch (e: any) {

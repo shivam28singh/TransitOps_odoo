@@ -29,7 +29,7 @@ export const POST: RequestHandler = async (event) => {
 		const body = await request.json();
 		const parsedData = CreateMaintenanceSchema.parse(body);
 
-		const result = async () => {
+		const result = await (async () => {
 			// Check if vehicle exists
 			const selectedVehicle = await db.query.vehicle.findFirst({
 				where: eq(vehicle.id, parsedData.vehicleId)
@@ -59,7 +59,7 @@ export const POST: RequestHandler = async (event) => {
 			}
 
 			return newRecord;
-		};
+		})();
 
 		return json({ success: true, record: result });
 	} catch (e: any) {

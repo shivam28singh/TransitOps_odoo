@@ -32,7 +32,7 @@ export const PUT: RequestHandler = async (event) => {
 		const body = await request.json();
 		const parsedData = UpdateTripSchema.parse(body);
 
-		const result = async () => {
+		const result = await (async () => {
 			// Fetch the trip
 			const currentTrip = await db.query.trip.findFirst({
 				where: eq(trip.id, tripId)
@@ -107,7 +107,7 @@ export const PUT: RequestHandler = async (event) => {
 			}
 
 			return { status: parsedData.status };
-		};
+		})();
 
 		return json({ success: true, result });
 	} catch (e: any) {

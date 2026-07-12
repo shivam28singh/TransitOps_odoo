@@ -35,7 +35,12 @@ export const POST: RequestHandler = async (event) => {
 	}
 
 	const role = locals.employee.role;
-	if (role !== 'ADMIN' && role !== 'DISPATCHER' && role !== 'SAFETY_OFFICER') {
+	if (
+		role !== 'ADMIN' &&
+		role !== 'DISPATCHER' &&
+		role !== 'SAFETY_OFFICER' &&
+		role !== 'FLEET_MANAGER'
+	) {
 		return json({ error: 'Forbidden' }, { status: 403 });
 	}
 
@@ -89,7 +94,7 @@ export const POST: RequestHandler = async (event) => {
 				.returning();
 
 			return { ...newDriver, fullName: newEmployee.fullName, phone: newEmployee.phone };
-		});
+		})();
 
 		return json({ success: true, driver: result });
 	} catch (e: any) {
@@ -113,7 +118,12 @@ export const PATCH: RequestHandler = async (event) => {
 	}
 
 	const role = locals.employee.role;
-	if (role !== 'ADMIN' && role !== 'DISPATCHER' && role !== 'SAFETY_OFFICER') {
+	if (
+		role !== 'ADMIN' &&
+		role !== 'DISPATCHER' &&
+		role !== 'SAFETY_OFFICER' &&
+		role !== 'FLEET_MANAGER'
+	) {
 		return json({ error: 'Forbidden' }, { status: 403 });
 	}
 

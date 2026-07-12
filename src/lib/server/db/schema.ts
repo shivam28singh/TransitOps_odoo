@@ -111,6 +111,9 @@ export const trip = pgTable('trip', {
 	distanceKm: numeric('distance_km', { precision: 10, scale: 2 }),
 	cargoWeightKg: numeric('cargo_weight_kg', { precision: 10, scale: 2 }),
 	status: tripStatusEnum('status').default('DRAFT').notNull(),
+	revenue: numeric('revenue', { precision: 12, scale: 2 }).default('0'),
+	tollCost: numeric('toll_cost', { precision: 10, scale: 2 }).default('0'),
+	otherCost: numeric('other_cost', { precision: 10, scale: 2 }).default('0'),
 	notes: text('notes'),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
 	updatedAt: timestamp('updated_at')
@@ -128,6 +131,33 @@ export const maintenance = pgTable('maintenance', {
 	cost: numeric('cost', { precision: 10, scale: 2 }).notNull(),
 	date: timestamp('date').notNull(),
 	status: maintenanceStatusEnum('status').default('ACTIVE').notNull(),
+	createdAt: timestamp('created_at').defaultNow().notNull(),
+	updatedAt: timestamp('updated_at')
+		.defaultNow()
+		.$onUpdate(() => new Date())
+		.notNull()
+});
+
+export const fuelLog = pgTable('fuel_log', {
+	id: serial('id').primaryKey(),
+	vehicleId: integer('vehicle_id')
+		.notNull()
+		.references(() => vehicle.id),
+	liters: numeric('liters', { precision: 10, scale: 2 }).notNull(),
+	cost: numeric('cost', { precision: 10, scale: 2 }).notNull(),
+	date: timestamp('date').notNull(),
+	createdAt: timestamp('created_at').defaultNow().notNull(),
+	updatedAt: timestamp('updated_at')
+		.defaultNow()
+		.$onUpdate(() => new Date())
+		.notNull()
+});
+
+export const systemSettings = pgTable('system_settings', {
+	id: serial('id').primaryKey(),
+	depotName: text('depot_name').default('TransitOps Main Depot').notNull(),
+	currency: text('currency').default('INR').notNull(),
+	distanceUnit: text('distance_unit').default('Kilometers').notNull(),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
 	updatedAt: timestamp('updated_at')
 		.defaultNow()
@@ -160,12 +190,20 @@ export const driverRelations = relations(driver, ({ one, many }) => ({
 
 export const vehicleRelations = relations(vehicle, ({ many }) => ({
 	trips: many(trip),
-	maintenanceLogs: many(maintenance)
+	maintenanceLogs: many(maintenance),
+	fuelLogs: many(fuelLog)
 }));
 
 export const maintenanceRelations = relations(maintenance, ({ one }) => ({
 	vehicle: one(vehicle, {
 		fields: [maintenance.vehicleId],
+		references: [vehicle.id]
+	})
+}));
+
+export const fuelLogRelations = relations(fuelLog, ({ one }) => ({
+	vehicle: one(vehicle, {
+		fields: [fuelLog.vehicleId],
 		references: [vehicle.id]
 	})
 }));
@@ -198,5 +236,11 @@ export type NewTrip = typeof trip.$inferInsert;
 
 export type Maintenance = typeof maintenance.$inferSelect;
 export type NewMaintenance = typeof maintenance.$inferInsert;
+
+export type FuelLog = typeof fuelLog.$inferSelect;
+export type NewFuelLog = typeof fuelLog.$inferInsert;
+
+export type SystemSettings = typeof systemSettings.$inferSelect;
+export type NewSystemSettings = typeof systemSettings.$inferInsert;
 
 export * from './auth.schema';

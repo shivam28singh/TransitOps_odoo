@@ -6,6 +6,7 @@ import { getRequestEvent } from '$app/server';
 import { db } from '$lib/server/db';
 import { employee } from '$lib/server/db/schema';
 import { sendEmailVerificationEmail, sendPasswordResetEmail } from './email';
+import { dash } from '@better-auth/infra';
 
 export const auth = betterAuth({
 	appName: 'TransitOps',
@@ -57,6 +58,7 @@ export const auth = betterAuth({
 		}
 	},
 	plugins: [
+		dash(),
 		sveltekitCookies(getRequestEvent) // make sure this is the last plugin in the array
 	]
 });

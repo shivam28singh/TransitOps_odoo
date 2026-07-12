@@ -11,6 +11,7 @@ export const task = pgTable('task', {
 export const employeeRoleEnum = pgEnum('employee_role', [
 	'ADMIN',
 	'FLEET_MANAGER',
+	'DISPATCHER',
 	'SAFETY_OFFICER',
 	'FINANCIAL_ANALYST',
 	'DRIVER'

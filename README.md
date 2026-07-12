@@ -1,6 +1,6 @@
 # TransitOps Odoo
 
-A modern, full-stack web application built with SvelteKit, designed for transit operations.
+A modern, full-stack web application built with SvelteKit, designed for transit operations
 
 ## 🚀 Tech Stack
 

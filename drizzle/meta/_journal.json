@@ -43,6 +43,13 @@
       "when": 1783849947315,
       "tag": "0005_sloppy_daredevil",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1783850328989,
+      "tag": "0006_mature_gateway",
+      "breakpoints": true
     }
   ]
 }

@@ -1,18 +1,47 @@
 <script lang="ts">
-	import { AtSignIcon, ChevronLeftIcon } from '@lucide/svelte';
+	import { AtSignIcon, ChevronLeftIcon, LockIcon } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { FloatingPaths } from '$lib/components/ui/floating-paths';
 	import { InputGroup, InputGroupAddon, InputGroupInput } from '$lib/components/ui/input-group';
+	import * as Select from '$lib/components/ui/select';
 	import { resolve } from '$app/paths';
+	import { authClient } from '$lib/authClient';
+	import { goto } from '$app/navigation';
+	import { toast } from 'svelte-sonner';
+	import { PUBLIC_ORIGIN } from '$env/static/public';
+
 	let homeHref = $state('/');
-	let emailPlaceholder = $state('your.email@example.com');
-	let quoteText = $state(
-		'"This Platform has helped me to save time and serve my clients faster than ever before."'
-	);
-	let quoteAuthor = $state('~ Ali Hassan');
+	let email = $state('');
+	let password = $state('');
+	let role = $state('Dispatcher');
+	let rememberMe = $state(false);
+	let isSubmitting = $state(false);
+	let errorMessage = $state('');
+
+	async function handleSignIn(e: Event) {
+		e.preventDefault();
+		isSubmitting = true;
+		errorMessage = '';
+
+		const { data, error } = await authClient.signIn.email({
+			email,
+			password,
+			rememberMe
+		});
+
+		if (error) {
+			errorMessage = error.message || 'Invalid credentials.';
+			toast.error('Invalid credentials.');
+		} else {
+			toast.success('Successfully signed in!');
+			goto(resolve('/'));
+		}
+		isSubmitting = false;
+	}
 </script>
 
 <main class="relative md:h-screen md:overflow-hidden lg:grid lg:grid-cols-2">
+	<!-- Left Side -->
 	<div
 		class="relative hidden h-full flex-col border-r bg-secondary p-10 lg:flex dark:bg-secondary/20"
 	>
@@ -25,19 +54,33 @@
 			<span>TransitOps</span>
 		</a>
 
-		<div class="z-10 mt-auto">
-			<blockquote class="space-y-2">
-				<p class="text-xl">{quoteText}</p>
-				<footer class="font-mono text-sm font-semibold">{quoteAuthor}</footer>
-			</blockquote>
-		</div>
+		<!-- Integrated Roles with existing blockquote-like layout/style to preserve look -->
+		<div class="z-10 mt-auto space-y-6">
+			<div class="space-y-1">
+				<h1 class="text-3xl font-extrabold tracking-tight">TransitOps</h1>
+				<p class="text-sm font-medium text-muted-foreground">Smart Transport Operations Platform</p>
+			</div>
 
+			<div class="space-y-2">
+				<h2 class="text-lg font-semibold tracking-tight">One login, four roles:</h2>
+				<ul class="space-y-1 text-sm text-muted-foreground list-disc pl-4">
+					<li class="marker:text-primary">Fleet Manager</li>
+					<li class="marker:text-primary">Dispatcher</li>
+					<li class="marker:text-primary">Safety Officer</li>
+					<li class="marker:text-primary">Financial Analyst</li>
+				</ul>
+			</div>
+		</div>
+		<div class="mt-auto pt-4 z-100! text-xs text-muted-foreground">TRANSITOPS © 2026</div>
+
+		<!-- Keeping the exact FloatingPaths animation -->
 		<div class="absolute inset-0">
 			<FloatingPaths position={1} />
 			<FloatingPaths position={-1} />
 		</div>
 	</div>
 
+	<!-- Right Side -->
 	<div class="relative flex min-h-screen flex-col justify-center px-8">
 		<div aria-hidden="true" class="absolute inset-0 isolate -z-10 opacity-60 contain-strict">
 			<div
@@ -56,41 +99,138 @@
 			Home
 		</Button>
 
-		<div class="mx-auto w-full max-w-sm space-y-4">
-			<a aria-label="Home" class="w-fit lg:hidden" href={resolve('/')}>
+		<div class="mx-auto w-full max-w-sm space-y-6">
+			<a aria-label="Home" class="w-fit lg:hidden flex items-center gap-2 mb-4" href={resolve('/')}>
 				<img src="favicon.svg" alt="Logo" class="size-5" />
+				<span class="font-bold">TransitOps</span>
 			</a>
 
 			<div class="flex flex-col space-y-1">
-				<h1 class="text-2xl font-bold tracking-wide">Sign In or Join Now!</h1>
-				<p class="text-base text-muted-foreground">login or create your account.</p>
+				<h1 class="text-2xl font-bold tracking-wide">Sign in to your account</h1>
+				<p class="text-sm text-muted-foreground">Enter your credentials to continue</p>
 			</div>
 
-			<form class="space-y-2">
-				<p class="text-start text-xs text-muted-foreground">
-					Enter your email address to sign in or create an account
-				</p>
+			<form class="space-y-4" onsubmit={handleSignIn}>
+				{#if errorMessage}
+					<div
+						class="p-3 text-xs text-destructive border border-destructive/20 bg-destructive/10 rounded-md"
+					>
+						<span class="font-bold">Error state</span><br />
+						❌ {errorMessage}
+					</div>
+				{/if}
 
-				<InputGroup>
-					<InputGroupInput placeholder={emailPlaceholder} type="email" />
-					<InputGroupAddon align="inline-start">
-						<AtSignIcon />
-					</InputGroupAddon>
-				</InputGroup>
+				<div class="space-y-3">
+					<div class="space-y-1">
+						<label
+							for="email"
+							class="text-[10px] font-bold text-muted-foreground tracking-wider uppercase"
+							>Email</label
+						>
+						<InputGroup>
+							<InputGroupInput
+								id="email"
+								bind:value={email}
+								placeholder="Raven.k@transitops.in"
+								type="email"
+								required
+							/>
+							<InputGroupAddon align="inline-start">
+								<AtSignIcon />
+							</InputGroupAddon>
+						</InputGroup>
+					</div>
 
-				<Button class="w-full" type="button">Continue With Email</Button>
+					<div class="space-y-1">
+						<label
+							for="password"
+							class="text-[10px] font-bold text-muted-foreground tracking-wider uppercase"
+							>Password</label
+						>
+						<InputGroup>
+							<InputGroupInput
+								id="password"
+								bind:value={password}
+								placeholder="********"
+								type="password"
+								required
+							/>
+							<InputGroupAddon align="inline-start">
+								<LockIcon />
+							</InputGroupAddon>
+						</InputGroup>
+					</div>
+
+					<div class="space-y-1">
+						<label
+							for="role"
+							class="text-[10px] font-bold text-muted-foreground tracking-wider uppercase"
+							>Role (RBAC)</label
+						>
+						<Select.Root type="single" bind:value={role}>
+							<Select.Trigger
+								class="w-full h-10 text-left bg-transparent border-input focus:ring-2 focus:ring-ring focus:ring-offset-2"
+							>
+								{role || 'Select a role'}
+							</Select.Trigger>
+							<Select.Content>
+								<Select.Item value="Fleet Manager" label="Fleet Manager" />
+								<Select.Item value="Dispatcher" label="Dispatcher" />
+								<Select.Item value="Safety Officer" label="Safety Officer" />
+								<Select.Item value="Financial Analyst" label="Financial Analyst" />
+							</Select.Content>
+						</Select.Root>
+					</div>
+				</div>
+
+				<div class="flex items-center justify-between">
+					<label
+						class="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer hover:text-foreground"
+					>
+						<input
+							type="checkbox"
+							bind:checked={rememberMe}
+							class="rounded border-input bg-transparent shadow-sm size-3.5 accent-primary"
+						/>
+						Remember me
+					</label>
+					<Button
+						onclick={() => {
+							if (!email) {
+								toast.error('Please enter your email.');
+								return;
+							}
+							toast.promise(
+								authClient.requestPasswordReset({
+									email: email,
+									redirectTo: `${PUBLIC_ORIGIN}/reset-password`
+								}),
+								{
+									loading: 'Sending password reset email...',
+									success: 'Password reset email sent.',
+									error: 'Failed to send password reset email.'
+								}
+							);
+						}}
+						class="text-xs font-semibold text-primary hover:underline underline-offset-4"
+						>Forgot password?</Button
+					>
+				</div>
+
+				<Button class="w-full h-10" type="submit" disabled={isSubmitting}>
+					{isSubmitting ? 'Signing in...' : 'Sign In'}
+				</Button>
 			</form>
 
-			<p class="mt-8 text-sm text-muted-foreground">
-				By clicking continue, you agree to our
-				<a class="underline underline-offset-4 hover:text-primary" href={resolve('/terms')}
-					>Terms of Service</a
-				>
-				and
-				<a class="underline underline-offset-4 hover:text-primary" href={resolve('/privacy')}
-					>Privacy Policy</a
-				>.
-			</p>
+			<div class="pt-4 border-t border-muted/50 space-y-1.5 text-xs text-muted-foreground">
+				<p class="font-medium">Access is scoped by role after login:</p>
+				<ul class="space-y-1 pl-1 text-[11px]">
+					<li>• Fleet Manager &rarr; Fleet, Maintenance</li>
+					<li>• Dispatcher &rarr; Dashboard, Trips</li>
+					<li>• Safety Officer &rarr; Drivers, Compliance</li>
+					<li>• Financial Analyst &rarr; Fuel & Expenses, Analytics</li>
+				</ul>
+			</div>
 		</div>
 	</div>
 </main>

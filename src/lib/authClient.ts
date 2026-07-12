@@ -1,8 +1,8 @@
-import { getRequestEvent } from '$app/server';
+import { PUBLIC_ORIGIN } from '$env/static/public';
 import { createAuthClient } from 'better-auth/client';
 import { adminClient } from 'better-auth/client/plugins';
-import { sveltekitCookies } from 'better-auth/svelte-kit';
 
 export const authClient = createAuthClient({
-	plugins: [adminClient(), sveltekitCookies(getRequestEvent)]
+	baseURL: PUBLIC_ORIGIN,
+	plugins: [adminClient()]
 });

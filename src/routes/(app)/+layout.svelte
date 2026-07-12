@@ -27,7 +27,7 @@
 	let user = $derived(page.data.user);
 	let employee = $derived(page.data.employee);
 
-	const links = [
+	const allLinks = [
 		{ label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
 		{ label: 'Fleet', href: '/fleet', icon: Truck },
 		{ label: 'Drivers', href: '/drivers', icon: Users },
@@ -37,13 +37,36 @@
 		{ label: 'Analytics', href: '/analytics', icon: ChartBar },
 		{ label: 'Settings', href: '/settings', icon: Settings }
 	];
+
+	let links = $derived(
+		allLinks.filter((link) => {
+			const role = employee?.role;
+			if (role === 'ADMIN') return true;
+			if (link.label === 'Dashboard' || link.label === 'Settings') return true;
+
+			switch (role) {
+				case 'FLEET_MANAGER':
+					return ['Fleet', 'Maintenance'].includes(link.label);
+				case 'DISPATCHER':
+					return ['Trips', 'Drivers', 'Fleet'].includes(link.label);
+				case 'SAFETY_OFFICER':
+					return ['Drivers', 'Analytics'].includes(link.label);
+				case 'FINANCIAL_ANALYST':
+					return ['Fuel & Expenses', 'Analytics'].includes(link.label);
+				case 'DRIVER':
+					return ['Trips'].includes(link.label);
+				default:
+					return false;
+			}
+		})
+	);
 </script>
 
 <Sidebar.Provider>
 	<Sidebar.Root>
 		<Sidebar.Header class="border-sidebar-border p-4 flex flex-row items-center justify-between">
 			<a class="flex items-center gap-2 font-semibold text-sidebar-foreground" href={resolve('/')}>
-				<img src="/favicon.svg" alt="Logo" class="size-6" />
+				<img src="/favicon.svg" alt="Logo" class="size-6 rounded" />
 				<span class="text-lg">TransitOps</span>
 			</a>
 		</Sidebar.Header>

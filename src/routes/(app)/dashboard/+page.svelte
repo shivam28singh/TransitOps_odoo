@@ -17,6 +17,21 @@
 	} from '@lucide/svelte';
 
 	let { data } = $props();
+	
+	let employee = $derived(page.data.employee);
+	let role = $derived(employee?.role || 'GUEST');
+
+	// Role-based visibility flags
+	let showActiveVehicles = $derived(['ADMIN', 'FLEET_MANAGER', 'DISPATCHER', 'FINANCIAL_ANALYST'].includes(role));
+	let showAvailableVehicles = $derived(['ADMIN', 'FLEET_MANAGER', 'DISPATCHER'].includes(role));
+	let showInMaintenance = $derived(['ADMIN', 'FLEET_MANAGER', 'FINANCIAL_ANALYST'].includes(role));
+	let showActiveTrips = $derived(['ADMIN', 'DISPATCHER', 'SAFETY_OFFICER', 'DRIVER'].includes(role));
+	let showPendingTrips = $derived(['ADMIN', 'DISPATCHER', 'DRIVER'].includes(role));
+	let showDriversOnDuty = $derived(['ADMIN', 'DISPATCHER', 'SAFETY_OFFICER'].includes(role));
+	let showFleetUtil = $derived(['ADMIN', 'FLEET_MANAGER', 'FINANCIAL_ANALYST'].includes(role));
+
+	let showRecentTrips = $derived(['ADMIN', 'DISPATCHER', 'SAFETY_OFFICER', 'DRIVER'].includes(role));
+	let showVehicleStatus = $derived(['ADMIN', 'FLEET_MANAGER', 'DISPATCHER', 'FINANCIAL_ANALYST'].includes(role));
 
 	// Bindable filter states
 	let selectedType = $derived(data.filters.selectedType);
@@ -137,10 +152,11 @@
 	</div>
 
 	<!-- KPI Metric Cards Grid (7 Cols as in Mockup) -->
-	<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
+	<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:flex lg:flex-wrap gap-4">
 		<!-- Active Vehicles -->
+		{#if showActiveVehicles}
 		<div
-			class="bg-card border-l-4 border-l-blue-500 border border-y-border border-r-border rounded-lg p-4 space-y-2 shadow-xs"
+			class="flex-1 min-w-[150px] bg-card border-l-4 border-l-blue-500 border border-y-border border-r-border rounded-lg p-4 space-y-2 shadow-xs"
 		>
 			<div class="flex items-center justify-between text-muted-foreground">
 				<span class="text-[10px] font-bold tracking-wider uppercase">Active Vehicles</span>
@@ -148,10 +164,12 @@
 			</div>
 			<div class="text-2xl font-bold tracking-tight">{data.kpis.activeVehicles}</div>
 		</div>
+		{/if}
 
 		<!-- Available Vehicles -->
+		{#if showAvailableVehicles}
 		<div
-			class="bg-card border-l-4 border-l-emerald-500 border border-y-border border-r-border rounded-lg p-4 space-y-2 shadow-xs"
+			class="flex-1 min-w-[150px] bg-card border-l-4 border-l-emerald-500 border border-y-border border-r-border rounded-lg p-4 space-y-2 shadow-xs"
 		>
 			<div class="flex items-center justify-between text-muted-foreground">
 				<span class="text-[10px] font-bold tracking-wider uppercase">Available Vehicles</span>
@@ -161,10 +179,12 @@
 				{data.kpis.availableVehicles}
 			</div>
 		</div>
+		{/if}
 
 		<!-- Vehicles in Maintenance -->
+		{#if showInMaintenance}
 		<div
-			class="bg-card border-l-4 border-l-amber-500 border border-y-border border-r-border rounded-lg p-4 space-y-2 shadow-xs"
+			class="flex-1 min-w-[150px] bg-card border-l-4 border-l-amber-500 border border-y-border border-r-border rounded-lg p-4 space-y-2 shadow-xs"
 		>
 			<div class="flex items-center justify-between text-muted-foreground">
 				<span class="text-[10px] font-bold tracking-wider uppercase">In Maintenance</span>
@@ -174,10 +194,12 @@
 				{data.kpis.inMaintenanceVehicles}
 			</div>
 		</div>
+		{/if}
 
 		<!-- Active Trips -->
+		{#if showActiveTrips}
 		<div
-			class="bg-card border-l-4 border-l-sky-500 border border-y-border border-r-border rounded-lg p-4 space-y-2 shadow-xs"
+			class="flex-1 min-w-[150px] bg-card border-l-4 border-l-sky-500 border border-y-border border-r-border rounded-lg p-4 space-y-2 shadow-xs"
 		>
 			<div class="flex items-center justify-between text-muted-foreground">
 				<span class="text-[10px] font-bold tracking-wider uppercase">Active Trips</span>
@@ -185,10 +207,12 @@
 			</div>
 			<div class="text-2xl font-bold tracking-tight">{data.kpis.activeTrips}</div>
 		</div>
+		{/if}
 
 		<!-- Pending Trips -->
+		{#if showPendingTrips}
 		<div
-			class="bg-card border-l-4 border-l-purple-500 border border-y-border border-r-border rounded-lg p-4 space-y-2 shadow-xs"
+			class="flex-1 min-w-[150px] bg-card border-l-4 border-l-purple-500 border border-y-border border-r-border rounded-lg p-4 space-y-2 shadow-xs"
 		>
 			<div class="flex items-center justify-between text-muted-foreground">
 				<span class="text-[10px] font-bold tracking-wider uppercase">Pending Trips</span>
@@ -196,10 +220,12 @@
 			</div>
 			<div class="text-2xl font-bold tracking-tight">{data.kpis.pendingTrips}</div>
 		</div>
+		{/if}
 
 		<!-- Drivers On Duty -->
+		{#if showDriversOnDuty}
 		<div
-			class="bg-card border-l-4 border-l-indigo-500 border border-y-border border-r-border rounded-lg p-4 space-y-2 shadow-xs"
+			class="flex-1 min-w-[150px] bg-card border-l-4 border-l-indigo-500 border border-y-border border-r-border rounded-lg p-4 space-y-2 shadow-xs"
 		>
 			<div class="flex items-center justify-between text-muted-foreground">
 				<span class="text-[10px] font-bold tracking-wider uppercase">Drivers On Duty</span>
@@ -207,10 +233,12 @@
 			</div>
 			<div class="text-2xl font-bold tracking-tight">{data.kpis.driversOnDuty}</div>
 		</div>
+		{/if}
 
 		<!-- Fleet Utilization -->
+		{#if showFleetUtil}
 		<div
-			class="bg-card border-l-4 border-l-teal-500 border border-y-border border-r-border rounded-lg p-4 space-y-2 shadow-xs col-span-2 sm:col-span-1"
+			class="flex-1 min-w-[150px] bg-card border-l-4 border-l-teal-500 border border-y-border border-r-border rounded-lg p-4 space-y-2 shadow-xs"
 		>
 			<div class="flex items-center justify-between text-muted-foreground">
 				<span class="text-[10px] font-bold tracking-wider uppercase">Fleet Util.</span>
@@ -220,11 +248,13 @@
 				{data.kpis.fleetUtilization}%
 			</div>
 		</div>
+		{/if}
 	</div>
 
 	<!-- Main Body layout (2 Columns) -->
 	<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 		<!-- Left: Recent Trips Table -->
+		{#if showRecentTrips}
 		<div class="lg:col-span-2 bg-card border border-border rounded-xl p-6 space-y-4 shadow-xs">
 			<h2 class="text-lg font-semibold tracking-tight">Recent Trips</h2>
 			<div class="border rounded-md">
@@ -282,9 +312,11 @@
 				</Table.Root>
 			</div>
 		</div>
+		{/if}
 
 		<!-- Right: Vehicle Status Progress Bars -->
-		<div class="bg-card border border-border rounded-xl p-6 space-y-6 shadow-xs">
+		{#if showVehicleStatus}
+		<div class="lg:col-span-1 bg-card border border-border rounded-xl p-6 space-y-6 shadow-xs">
 			<h2 class="text-lg font-semibold tracking-tight">Vehicle Status</h2>
 			<div class="space-y-4">
 				{#if true}
@@ -358,5 +390,6 @@
 				{/if}
 			</div>
 		</div>
+		{/if}
 	</div>
 </div>

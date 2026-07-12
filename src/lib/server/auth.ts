@@ -20,7 +20,7 @@ export const auth = betterAuth({
 					await db.insert(employee).values({
 						userId: user.id,
 						fullName: user.name,
-						role: 'DRIVER',
+						role: (user.role as any) || 'DRIVER',
 						status: 'ACTIVE'
 					});
 				}

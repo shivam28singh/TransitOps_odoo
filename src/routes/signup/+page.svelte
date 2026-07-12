@@ -3,6 +3,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { FloatingPaths } from '$lib/components/ui/floating-paths';
 	import { InputGroup, InputGroupAddon, InputGroupInput } from '$lib/components/ui/input-group';
+	import * as Select from '$lib/components/ui/select';
 	import { resolve } from '$app/paths';
 	import { toast } from 'svelte-sonner';
 	import { enhance } from '$app/forms';
@@ -13,6 +14,7 @@
 	let name = $state('');
 	let email = $state('');
 	let password = $state('');
+	let role = $state('DISPATCHER');
 	let isSubmitting = $state(false);
 	let errorMessage = $state('');
 	let isSuccess = $state(false);
@@ -198,6 +200,28 @@
 									<LockIcon />
 								</InputGroupAddon>
 							</InputGroup>
+						</div>
+
+						<div class="space-y-1">
+							<label
+								for="role"
+								class="text-[10px] font-bold text-muted-foreground tracking-wider uppercase"
+								>Role (RBAC)</label
+							>
+							<Select.Root type="single" bind:value={role} name="role">
+								<Select.Trigger
+									class="w-full h-10 text-left bg-transparent border-input focus:ring-2 focus:ring-ring focus:ring-offset-2"
+								>
+									{role || 'Select a role'}
+								</Select.Trigger>
+								<Select.Content>
+									<Select.Item value="FLEET_MANAGER" label="Fleet Manager" />
+									<Select.Item value="DISPATCHER" label="Dispatcher" />
+									<Select.Item value="SAFETY_OFFICER" label="Safety Officer" />
+									<Select.Item value="FINANCIAL_ANALYST" label="Financial Analyst" />
+									<Select.Item value="ADMIN" label="Admin" />
+								</Select.Content>
+							</Select.Root>
 						</div>
 					</div>
 

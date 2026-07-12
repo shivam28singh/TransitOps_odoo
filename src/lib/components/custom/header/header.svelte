@@ -3,7 +3,8 @@
 	import { Button } from '$lib/components/ui/button';
 	import { createScroll } from '$lib/hooks/use-scroll.svelte';
 	import { cn } from '$lib/utils';
-	import MobileNav from './header-two/mobile-nav.svelte';
+	import Themetoggler from '../themetoggler.svelte';
+	import MobileNav from './mobile-nav.svelte';
 	import { navLinks } from './nav-links';
 	let scroll = createScroll(10);
 </script>
@@ -21,19 +22,20 @@
 			scroll.scrolled && 'md:px-2'
 		)}
 	>
-		<a class="rounded-md p-2 hover:bg-muted dark:hover:bg-muted/50" href={resolve('/')}>
-			<img src="/favicon.svg" alt="Logo" />
+		<a class="nodefault flex items-center gap-2" href={resolve('/')}>
+			<img src="/favicon.svg" alt="Logo" class="size-5" />
+			<span class="font-bold">TransitOps</span>
 		</a>
 		<div class="hidden items-center gap-2 md:flex">
 			<div>
 				{#each navLinks as { label, href } (label)}
-					<Button size="sm" variant="ghost" {href}>
+					<Button class="nodefault" variant="ghost" {href}>
 						{label}
 					</Button>
 				{/each}
 			</div>
-			<Button size="sm" variant="outline">Sign In</Button>
-			<Button size="sm">Get Started</Button>
+			<Themetoggler />
+			<Button class="nodefault" href={resolve('/signin')} variant="outline">Sign In</Button>
 		</div>
 		<MobileNav />
 	</nav>

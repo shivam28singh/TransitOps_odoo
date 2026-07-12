@@ -15,8 +15,9 @@ export const actions: Actions = {
 		const name = formData.get('name') as string;
 		const email = formData.get('email') as string;
 		const password = formData.get('password') as string;
-		if (!name || !email || !password) {
-			return fail(400, { error: 'Name, email, and password are required.' });
+		const role = formData.get('role') as string;
+		if (!name || !email || !password || !role) {
+			return fail(400, { error: 'Name, email, password, and role are required.' });
 		}
 
 		try {
@@ -24,8 +25,9 @@ export const actions: Actions = {
 				body: {
 					name,
 					email,
-					password
-				},
+					password,
+					role
+				} as any,
 				headers: event.request.headers
 			});
 		} catch (err: any) {

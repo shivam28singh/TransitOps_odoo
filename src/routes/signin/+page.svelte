@@ -13,6 +13,7 @@
 	let homeHref = $state('/');
 	let email = $state('');
 	let password = $state('');
+	let role = $state('DISPATCHER');
 	let rememberMe = $state(false);
 	let isSubmitting = $state(false);
 	let errorMessage = $state('');
@@ -124,7 +125,7 @@
 				<p class="text-sm text-muted-foreground">Enter your credentials to continue</p>
 			</div>
 
-			<form class="space-y-4" method="POST" use:enhance={submitHandler}>
+			<form class="space-y-4" method="POST" action="?/signin" use:enhance={submitHandler}>
 				{#if errorMessage}
 					<div
 						class="p-3 text-xs text-destructive border border-destructive/20 bg-destructive/10 rounded-md"
@@ -176,6 +177,32 @@
 							</InputGroupAddon>
 						</InputGroup>
 					</div>
+
+					<div class="space-y-1">
+						<label
+							for="role"
+							class="text-[10px] font-bold text-muted-foreground tracking-wider uppercase"
+							>Role (RBAC)</label
+						>
+						<Select.Root type="single" bind:value={role} name="role">
+							<Select.Trigger
+								class="w-full h-10 text-left bg-transparent border-input focus:ring-2 focus:ring-ring focus:ring-offset-2"
+							>
+								{role || 'Select a role'}
+							</Select.Trigger>
+
+							<Select.Content>
+								<Select.Group>
+									<Select.GroupHeading>Role</Select.GroupHeading>
+									<Select.Item value="FLEET_MANAGER" label="Fleet Manager" />
+									<Select.Item value="DISPATCHER" label="Dispatcher" />
+									<Select.Item value="SAFETY_OFFICER" label="Safety Officer" />
+									<Select.Item value="FINANCIAL_ANALYST" label="Financial Analyst" />
+									<Select.Item value="ADMIN" label="Admin" />
+								</Select.Group>
+							</Select.Content>
+						</Select.Root>
+					</div>
 				</div>
 
 				<div class="flex items-center justify-between">
@@ -191,6 +218,7 @@
 						Remember me
 					</label>
 					<Button
+						variant="link"
 						type="submit"
 						formaction="?/forgotPassword"
 						formnovalidate

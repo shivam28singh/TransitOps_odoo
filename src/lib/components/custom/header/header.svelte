@@ -3,10 +3,18 @@
 	import { Button } from '$lib/components/ui/button';
 	import { createScroll } from '$lib/hooks/use-scroll.svelte';
 	import { cn } from '$lib/utils';
+	import type { User } from 'better-auth';
+	import * as Avatar from '$lib/components/ui/avatar';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import Themetoggler from '../themetoggler.svelte';
 	import MobileNav from './mobile-nav.svelte';
 	import { navLinks } from './nav-links';
 	let scroll = createScroll(10);
+
+	interface Props {
+		user?: User;
+	}
+	const { user }: Props = $props();
 </script>
 
 <header
@@ -35,7 +43,26 @@
 				{/each}
 			</div>
 			<Themetoggler />
-			<Button class="nodefault" href={resolve('/signin')} variant="outline">Sign In</Button>
+			{#if user}
+				<DropdownMenu.Root>
+					<DropdownMenu.Trigger>
+						<Avatar.Root class="size-8 cursor-pointer">
+							<Avatar.Fallback>{user.name?.charAt(0).toUpperCase() || 'U'}</Avatar.Fallback>
+						</Avatar.Root>
+					</DropdownMenu.Trigger>
+					<DropdownMenu.Content align="end">
+						<DropdownMenu.Label>{user.name || 'User'}</DropdownMenu.Label>
+						<a href={resolve('/admin')} class="nodefault">
+							<DropdownMenu.Item>Get Started</DropdownMenu.Item>
+						</a>
+						<a href={resolve('/signout')} class="nodefault">
+							<DropdownMenu.Item variant="destructive">Sign Out</DropdownMenu.Item>
+						</a>
+					</DropdownMenu.Content>
+				</DropdownMenu.Root>
+			{:else}
+				<Button class="nodefault" href={resolve('/signin')} variant="outline">Sign In</Button>
+			{/if}
 		</div>
 		<MobileNav />
 	</nav>

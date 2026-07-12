@@ -10,6 +10,12 @@
 
 	let { data } = $props();
 
+	let searchQuery = $state('');
+
+	let filteredEmployees = $derived(
+		data.employees.filter((emp) => emp.email.toLowerCase().includes(searchQuery.toLowerCase()))
+	);
+
 	// Keep track of which employee role is being updated to show a loading state if needed
 	let updatingId = $state<number | null>(null);
 
@@ -43,6 +49,15 @@
 		</div>
 	</div>
 
+	<div class="flex items-center justify-between">
+		<input
+			type="search"
+			placeholder="Search by email..."
+			bind:value={searchQuery}
+			class="flex h-10 w-full max-w-sm rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+		/>
+	</div>
+
 	<div class="rounded-md border bg-card">
 		<Table.Root>
 			<Table.Header>
@@ -54,7 +69,7 @@
 				</Table.Row>
 			</Table.Header>
 			<Table.Body>
-				{#each data.employees as employee (employee.id)}
+				{#each filteredEmployees as employee (employee.id)}
 					<Table.Row>
 						<Table.Cell class="font-medium">{employee.fullName}</Table.Cell>
 						<Table.Cell>{employee.email}</Table.Cell>
@@ -74,27 +89,20 @@
 								class="flex items-center gap-2"
 							>
 								<input type="hidden" name="employeeId" value={employee.id} />
-								<Select.Root
-									type="single"
-									name="role"
-									value={employee.role}
-									onValueChange={(val) => {
-										// In Svelte 5, we can use the HTMLFormElement's requestSubmit
-										// but to easily trigger it inside the select component, we let a hidden submit button do it
-										// Alternatively, since Shadcn's select doesn't easily emit native DOM submit events,
-										// we can bind a reference to the form and call requestSubmit.
-									}}
-								>
+								<Select.Root type="single" name="role" value={employee.role}>
 									<Select.Trigger class="w-[180px] h-8 text-xs">
 										{employee.role}
 									</Select.Trigger>
 									<Select.Content>
-										<Select.Item value="DRIVER" label="Driver" />
-										<Select.Item value="FLEET_MANAGER" label="Fleet Manager" />
-										<Select.Item value="DISPATCHER" label="Dispatcher" />
-										<Select.Item value="SAFETY_OFFICER" label="Safety Officer" />
-										<Select.Item value="FINANCIAL_ANALYST" label="Financial Analyst" />
-										<Select.Item value="ADMIN" label="Admin" />
+										<Select.Group>
+											<Select.GroupHeading>Role</Select.GroupHeading>
+											<Select.Item value="DRIVER" label="Driver" />
+											<Select.Item value="FLEET_MANAGER" label="Fleet Manager" />
+											<Select.Item value="DISPATCHER" label="Dispatcher" />
+											<Select.Item value="SAFETY_OFFICER" label="Safety Officer" />
+											<Select.Item value="FINANCIAL_ANALYST" label="Financial Analyst" />
+											<!-- <Select.Item value="ADMIN" label="Admin" /> -->
+										</Select.Group>
 									</Select.Content>
 								</Select.Root>
 

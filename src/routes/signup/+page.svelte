@@ -215,11 +215,14 @@
 									{role || 'Select a role'}
 								</Select.Trigger>
 								<Select.Content>
-									<Select.Item value="FLEET_MANAGER" label="Fleet Manager" />
-									<Select.Item value="DISPATCHER" label="Dispatcher" />
-									<Select.Item value="SAFETY_OFFICER" label="Safety Officer" />
-									<Select.Item value="FINANCIAL_ANALYST" label="Financial Analyst" />
-									<Select.Item value="ADMIN" label="Admin" />
+									<Select.Group>
+										<Select.GroupHeading>Role</Select.GroupHeading>
+										<Select.Item value="FLEET_MANAGER" label="Fleet Manager" />
+										<Select.Item value="DISPATCHER" label="Dispatcher" />
+										<Select.Item value="SAFETY_OFFICER" label="Safety Officer" />
+										<Select.Item value="FINANCIAL_ANALYST" label="Financial Analyst" />
+										<!-- <Select.Item value="ADMIN" label="Admin" /> -->
+									</Select.Group>
 								</Select.Content>
 							</Select.Root>
 						</div>

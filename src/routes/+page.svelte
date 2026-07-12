@@ -159,7 +159,10 @@
 	</div>
 </section>
 
-<div id="features" class="mx-auto grid max-w-5xl grid-cols-2 gap-4 py-16 px-4 md:grid-cols-4 animate-in fade-in slide-in-from-bottom-10 duration-700 delay-500 fill-mode-backwards">
+<div
+	id="features"
+	class="mx-auto grid max-w-5xl grid-cols-2 gap-4 py-16 px-4 md:grid-cols-4 animate-in fade-in slide-in-from-bottom-10 duration-700 delay-500 fill-mode-backwards"
+>
 	{#each features as feature, index (feature.title)}
 		{@const FeatureIcon = feature.icon}
 		<div
@@ -184,7 +187,10 @@
 	{/each}
 </div>
 
-<div id="testimonials" class="w-full flex flex-col items-center justify-center py-20 px-4 relative overflow-hidden animate-in fade-in slide-in-from-bottom-10 duration-700 delay-[600ms] fill-mode-backwards">
+<div
+	id="testimonials"
+	class="w-full flex flex-col items-center justify-center py-20 px-4 relative overflow-hidden animate-in fade-in slide-in-from-bottom-10 duration-700 delay-[600ms] fill-mode-backwards"
+>
 	<div class="text-center mb-16 max-w-3xl mx-auto space-y-4">
 		<h2 class="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl text-foreground">
 			Trusted by Industry Leaders
@@ -199,7 +205,10 @@
 	</div>
 </div>
 
-<div id="faqs" class="mx-auto w-full max-w-3xl space-y-7 px-4 py-24 animate-in fade-in slide-in-from-bottom-10 duration-700 delay-[600ms] fill-mode-backwards">
+<div
+	id="faqs"
+	class="mx-auto w-full max-w-3xl space-y-7 px-4 py-24 animate-in fade-in slide-in-from-bottom-10 duration-700 delay-[600ms] fill-mode-backwards"
+>
 	<div class="space-y-4 text-center mb-10">
 		<h2 class="text-3xl font-bold tracking-tight md:text-4xl text-foreground">
 			Frequently Asked Questions

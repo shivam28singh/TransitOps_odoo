@@ -23,11 +23,12 @@ const handleBetterAuth: Handle = async ({ event, resolve }) => {
 
 	const path = event.url.pathname;
 
-	let requiredModule: 'fleet' | 'driver' | 'trip' | 'fuel_exp' | 'analytics' | 'admin' | 'settings' | null =
-		null;
+	let requiredModule:
+		'fleet' | 'driver' | 'trip' | 'fuel_exp' | 'analytics' | 'admin' | 'settings' | null = null;
 
 	if (path.startsWith('/admin')) requiredModule = 'admin';
-	else if (path.startsWith('/settings') || path.startsWith('/api/settings')) requiredModule = 'settings';
+	else if (path.startsWith('/settings') || path.startsWith('/api/settings'))
+		requiredModule = 'settings';
 	else if (
 		path.startsWith('/fleet') ||
 		path.startsWith('/api/fleet') ||

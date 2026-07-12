@@ -369,11 +369,23 @@
 									Awaiting dispatch
 								{:else if trip.status === 'DISPATCHED'}
 									<div class="flex gap-2">
-										<Button variant="outline" size="sm" class="h-7 text-xs border-emerald-500/50 hover:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" onclick={() => openCompleteDialog(trip.id)} disabled={updatingStatus}>
-											<CheckCircle class="size-3 mr-1"/> Complete
+										<Button
+											variant="outline"
+											size="sm"
+											class="h-7 text-xs border-emerald-500/50 hover:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+											onclick={() => openCompleteDialog(trip.id)}
+											disabled={updatingStatus}
+										>
+											<CheckCircle class="size-3 mr-1" /> Complete
 										</Button>
-										<Button variant="outline" size="sm" class="h-7 text-xs text-destructive hover:bg-destructive/10 border-destructive/50" onclick={() => handleCancelTrip(trip.id)} disabled={updatingStatus}>
-											<Ban class="size-3 mr-1"/> Cancel
+										<Button
+											variant="outline"
+											size="sm"
+											class="h-7 text-xs text-destructive hover:bg-destructive/10 border-destructive/50"
+											onclick={() => handleCancelTrip(trip.id)}
+											disabled={updatingStatus}
+										>
+											<Ban class="size-3 mr-1" /> Cancel
 										</Button>
 									</div>
 								{:else if trip.status === 'CANCELLED'}
@@ -415,7 +427,7 @@
 			</div>
 		</div>
 		<Dialog.Footer>
-			<Button variant="outline" onclick={() => completeDialogOpen = false}>Cancel</Button>
+			<Button variant="outline" onclick={() => (completeDialogOpen = false)}>Cancel</Button>
 			<Button onclick={submitCompleteTrip} disabled={updatingStatus}>Complete Trip</Button>
 		</Dialog.Footer>
 	</Dialog.Content>

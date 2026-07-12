@@ -97,7 +97,11 @@
 								class="inline-block"
 							>
 								<input type="hidden" name="employeeId" value={employee.id} />
-								<input type="hidden" name="status" value={employee.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE'} />
+								<input
+									type="hidden"
+									name="status"
+									value={employee.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE'}
+								/>
 								<button
 									type="submit"
 									class="hover:opacity-80 transition-opacity"
@@ -120,7 +124,12 @@
 								class="flex items-center gap-2"
 							>
 								<input type="hidden" name="employeeId" value={employee.id} />
-								<Select.Root type="single" name="role" value={employee.role} disabled={employee.userId === data.user?.id}>
+								<Select.Root
+									type="single"
+									name="role"
+									value={employee.role}
+									disabled={employee.userId === data.user?.id}
+								>
 									<Select.Trigger class="w-[180px] h-8 text-xs">
 										{employee.role}
 									</Select.Trigger>

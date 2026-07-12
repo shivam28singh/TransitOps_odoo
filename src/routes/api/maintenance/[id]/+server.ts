@@ -39,10 +39,7 @@ export const PUT: RequestHandler = async (event) => {
 				.where(eq(maintenance.id, maintenanceId));
 
 			// Update vehicle status back to AVAILABLE
-			await tx
-				.update(vehicle)
-				.set({ status: 'AVAILABLE' })
-				.where(eq(vehicle.id, record.vehicleId));
+			await tx.update(vehicle).set({ status: 'AVAILABLE' }).where(eq(vehicle.id, record.vehicleId));
 
 			return { status: 'COMPLETED' };
 		});

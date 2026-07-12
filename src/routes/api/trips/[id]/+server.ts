@@ -49,7 +49,7 @@ export const PUT: RequestHandler = async (event) => {
 				// 1. Update Trip
 				await tx
 					.update(trip)
-					.set({ 
+					.set({
 						status: 'COMPLETED',
 						endTime: new Date()
 					})
@@ -59,9 +59,9 @@ export const PUT: RequestHandler = async (event) => {
 				if (parsedData.odometerKm !== undefined) {
 					await tx
 						.update(vehicle)
-						.set({ 
+						.set({
 							odometerKm: parsedData.odometerKm.toString(),
-							status: 'AVAILABLE' 
+							status: 'AVAILABLE'
 						})
 						.where(eq(vehicle.id, currentTrip.vehicleId));
 				} else {
@@ -72,7 +72,11 @@ export const PUT: RequestHandler = async (event) => {
 				}
 
 				// 3. Log Fuel if provided
-				if (parsedData.fuelLiters !== undefined && parsedData.fuelCost !== undefined && parsedData.fuelLiters > 0) {
+				if (
+					parsedData.fuelLiters !== undefined &&
+					parsedData.fuelCost !== undefined &&
+					parsedData.fuelLiters > 0
+				) {
 					await tx.insert(fuelLog).values({
 						vehicleId: currentTrip.vehicleId,
 						liters: parsedData.fuelLiters.toString(),
@@ -86,19 +90,16 @@ export const PUT: RequestHandler = async (event) => {
 					.update(driver)
 					.set({ status: 'AVAILABLE' })
 					.where(eq(driver.id, currentTrip.driverId));
-			} 
+			}
 			// Cancel workflow
 			else if (parsedData.status === 'CANCELLED') {
-				await tx
-					.update(trip)
-					.set({ status: 'CANCELLED' })
-					.where(eq(trip.id, tripId));
-					
+				await tx.update(trip).set({ status: 'CANCELLED' }).where(eq(trip.id, tripId));
+
 				await tx
 					.update(vehicle)
 					.set({ status: 'AVAILABLE' })
 					.where(eq(vehicle.id, currentTrip.vehicleId));
-					
+
 				await tx
 					.update(driver)
 					.set({ status: 'AVAILABLE' })

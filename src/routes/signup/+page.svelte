@@ -3,7 +3,6 @@
 	import { Button } from '$lib/components/ui/button';
 	import { FloatingPaths } from '$lib/components/ui/floating-paths';
 	import { InputGroup, InputGroupAddon, InputGroupInput } from '$lib/components/ui/input-group';
-	import * as Select from '$lib/components/ui/select';
 	import { resolve } from '$app/paths';
 	import { toast } from 'svelte-sonner';
 	import { enhance } from '$app/forms';
@@ -14,7 +13,6 @@
 	let name = $state('');
 	let email = $state('');
 	let password = $state('');
-	let role = $state('Dispatcher');
 	let isSubmitting = $state(false);
 	let errorMessage = $state('');
 	let isSuccess = $state(false);
@@ -63,7 +61,7 @@
 				<h1 class="text-3xl font-extrabold tracking-tight">TransitOps</h1>
 				<p class="text-sm font-medium text-muted-foreground">Smart Transport Operations Platform</p>
 			</div>
-			
+
 			<div class="space-y-2">
 				<h2 class="text-lg font-semibold tracking-tight">One login, four roles:</h2>
 				<ul class="space-y-1 text-sm text-muted-foreground list-disc pl-4">
@@ -111,7 +109,11 @@
 				<div class="space-y-4">
 					<div class="flex flex-col space-y-1">
 						<h1 class="text-2xl font-bold tracking-wide text-primary">Verify your email</h1>
-						<p class="text-sm text-muted-foreground">We sent a verification email to <span class="font-semibold text-foreground">{email}</span>.</p>
+						<p class="text-sm text-muted-foreground">
+							We sent a verification email to <span class="font-semibold text-foreground"
+								>{email}</span
+							>.
+						</p>
 					</div>
 					<div class="p-4 bg-muted/30 rounded-lg text-sm text-muted-foreground border border-muted">
 						Please click the link inside the verification email to activate your account.
@@ -197,27 +199,6 @@
 								</InputGroupAddon>
 							</InputGroup>
 						</div>
-
-						<div class="space-y-1">
-							<label
-								for="role"
-								class="text-[10px] font-bold text-muted-foreground tracking-wider uppercase"
-								>Role (RBAC)</label
-							>
-							<Select.Root type="single" bind:value={role} name="role">
-								<Select.Trigger
-									class="w-full h-10 text-left bg-transparent border-input focus:ring-2 focus:ring-ring focus:ring-offset-2"
-								>
-									{role || 'Select a role'}
-								</Select.Trigger>
-								<Select.Content>
-									<Select.Item value="Fleet Manager" label="Fleet Manager" />
-									<Select.Item value="Dispatcher" label="Dispatcher" />
-									<Select.Item value="Safety Officer" label="Safety Officer" />
-									<Select.Item value="Financial Analyst" label="Financial Analyst" />
-								</Select.Content>
-							</Select.Root>
-						</div>
 					</div>
 
 					<Button class="w-full h-10" type="submit" disabled={isSubmitting}>
@@ -226,8 +207,11 @@
 				</form>
 
 				<p class="text-xs text-center text-muted-foreground">
-					Already have an account? 
-					<a href={resolve('/signin')} class="font-semibold text-primary hover:underline underline-offset-4">Sign In</a>
+					Already have an account?
+					<a
+						href={resolve('/signin')}
+						class="font-semibold text-primary hover:underline underline-offset-4">Sign In</a
+					>
 				</p>
 			{/if}
 		</div>

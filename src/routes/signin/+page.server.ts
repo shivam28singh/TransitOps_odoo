@@ -15,10 +15,8 @@ export const actions: Actions = {
 		const formData = await event.request.formData();
 		const email = formData.get('email') as string;
 		const password = formData.get('password') as string;
-		const role = formData.get('role') as string;
-
-		if (!email || !password || !role) {
-			return fail(400, { error: 'Email, password, and role are required.' });
+		if (!email || !password) {
+			return fail(400, { error: 'Email and password are required.' });
 		}
 
 		try {
@@ -29,14 +27,6 @@ export const actions: Actions = {
 				},
 				headers: event.request.headers
 			});
-
-			if (res.user.role !== role) {
-				// Sign out immediately to clear any set-cookie headers from better-auth
-				await auth.api.signOut({
-					headers: event.request.headers
-				});
-				return fail(400, { error: 'Invalid credentials.' });
-			}
 		} catch (err: any) {
 			return fail(400, { error: err.message || 'Invalid credentials.' });
 		}

@@ -13,7 +13,6 @@
 	let homeHref = $state('/');
 	let email = $state('');
 	let password = $state('');
-	let role = $state('Dispatcher');
 	let rememberMe = $state(false);
 	let isSubmitting = $state(false);
 	let errorMessage = $state('');
@@ -176,27 +175,6 @@
 								<LockIcon />
 							</InputGroupAddon>
 						</InputGroup>
-					</div>
-
-					<div class="space-y-1">
-						<label
-							for="role"
-							class="text-[10px] font-bold text-muted-foreground tracking-wider uppercase"
-							>Role (RBAC)</label
-						>
-						<Select.Root type="single" bind:value={role} name="role">
-							<Select.Trigger
-								class="w-full h-10 text-left bg-transparent border-input focus:ring-2 focus:ring-ring focus:ring-offset-2"
-							>
-								{role || 'Select a role'}
-							</Select.Trigger>
-							<Select.Content>
-								<Select.Item value="Fleet Manager" label="Fleet Manager" />
-								<Select.Item value="Dispatcher" label="Dispatcher" />
-								<Select.Item value="Safety Officer" label="Safety Officer" />
-								<Select.Item value="Financial Analyst" label="Financial Analyst" />
-							</Select.Content>
-						</Select.Root>
 					</div>
 				</div>
 

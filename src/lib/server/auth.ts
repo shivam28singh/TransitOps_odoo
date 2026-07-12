@@ -4,7 +4,7 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
 import { db } from '$lib/server/db';
-import { admin } from 'better-auth/plugins';
+import { employee } from '$lib/server/db/schema';
 import { sendEmailVerificationEmail, sendPasswordResetEmail } from './email';
 
 export const auth = betterAuth({
@@ -12,6 +12,20 @@ export const auth = betterAuth({
 	baseURL: env.ORIGIN,
 	secret: env.BETTER_AUTH_SECRET,
 	database: drizzleAdapter(db, { provider: 'pg' }),
+	databaseHooks: {
+		user: {
+			create: {
+				after: async (user) => {
+					await db.insert(employee).values({
+						userId: user.id,
+						fullName: user.name,
+						role: 'DRIVER',
+						status: 'ACTIVE'
+					});
+				}
+			}
+		}
+	},
 	emailAndPassword: {
 		enabled: true,
 		requireEmailVerification: true,
@@ -43,7 +57,6 @@ export const auth = betterAuth({
 		}
 	},
 	plugins: [
-		admin(),
 		sveltekitCookies(getRequestEvent) // make sure this is the last plugin in the array
 	]
 });
